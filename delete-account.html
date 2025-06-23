@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Account</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 40px 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 30px;
+      color: red;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background-color: red;
+      color: white;
+    }
+    .cancel-btn {
+      background-color: #ccc;
+      margin-top: 10px;
+    }
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Delete Account</h1>
+  <p>This action is permanent and cannot be undone. Are you sure you want to delete your account?</p>
+
+  <button class="delete-btn" onclick="deleteAccount()">Yes, Delete My Account</button>
+  <button class="cancel-btn" onclick="cancelDelete()">Cancel</button>
+
+  <div class="message" id="message"></div>
+
+  <script>
+    function deleteAccount() {
+      // Placeholder for API call
+      document.getElementById("message").textContent = "Account deletion request sent (placeholder).";
+    }
+
+    function cancelDelete() {
+      window.location.href = "/dashboard"; // Redirect or close modal
+    }
+  </script>
+
+</body>
+</html>
