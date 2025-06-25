@@ -46,16 +46,16 @@
     button:hover {
       background-color: #e57c35;
     }
-    .trial-link {
+    .free-trial {
       text-align: center;
       margin-top: 20px;
     }
-    .trial-link a {
-      color: #f7944e;
+    .free-trial a {
       font-size: 16px;
+      color: #f7944e;
       text-decoration: none;
     }
-    .trial-link a:hover {
+    .free-trial a:hover {
       text-decoration: underline;
     }
   </style>
@@ -69,9 +69,10 @@
       <button type="submit">Login</button>
     </form>
 
-    <div class="trial-link">
-      <p>Don't have an account?</p>
-      <a href="https://buy.stripe.com/YOUR-STRIPE-LINK" target="_blank">Start Your Free Trial</a>
+    <!-- 🔥 Your live Stripe trial link -->
+    <div class="free-trial">
+      <p>Don’t have an account?</p>
+      <a href="https://buy.stripe.com/6oU7sLb6V168aUV5TIdQQ03" target="_blank">Start Your Free Trial</a>
     </div>
   </div>
 
@@ -88,10 +89,7 @@
       const email = document.querySelector('#email').value;
       const password = document.querySelector('#password').value;
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
         alert('Login failed. Please check your email and password.');
