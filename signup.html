@@ -3,89 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cheeseburger – Sign Up</title>
+  <title>Cheeseburger Signup</title>
   <style>
     body {
-      background-color: #f8f8f8;
-      font-family: Arial, sans-serif;
-      font-size: 20px;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 50px 20px;
       max-width: 400px;
-      margin: 80px auto;
-      padding: 30px;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: auto;
     }
-
-    h2 {
+    h1 {
       text-align: center;
+      font-size: 28px;
       margin-bottom: 30px;
     }
-
     input {
       display: block;
       width: 100%;
       padding: 12px;
       margin-bottom: 20px;
+      font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px;
     }
-
     button {
       width: 100%;
       padding: 12px;
-      background-color: black;
+      background: black;
       color: white;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
+      border-radius: 6px;
     }
-
-    .link {
+    .link-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .link-row a {
+      color: black;
+      text-decoration: underline;
+    }
+    .message {
       text-align: center;
+      font-size: 14px;
       margin-top: 20px;
+      color: green;
     }
-
     .error {
       color: red;
-      text-align: center;
-      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Join Cheeseburger</h2>
-    <div id="errorMsg" class="error"></div>
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button onclick="signUp()">Create Account</button>
+  <h1>Cheeseburger Signup</h1>
 
-    <div class="link">
-      <a href="cheeseburger-login.html">Already have an account? Log in</a><br/>
-      <a href="#">Forgot password?</a> | <a href="#">Contact us</a>
-    </div>
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="signup()">Sign Up</button>
+
+  <div class="link-row">
+    <a href="#">Forgot Password?</a>
+    <a href="#">Contact Us</a>
   </div>
+
+  <div id="message" class="message"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // shortened for clarity
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI';
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function signUp() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const errorMsg = document.getElementById('errorMsg');
+    async function signup() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = '';
+      messageEl.classList.remove('error');
+
+      if (!email || !password) {
+        messageEl.textContent = 'Email and password required';
+        messageEl.classList.add('error');
+        return;
+      }
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -93,12 +98,17 @@
       });
 
       if (error) {
-        errorMsg.textContent = error.message;
+        messageEl.textContent = error.message;
+        messageEl.classList.add('error');
       } else {
-        window.location.href = 'dashboard.html';
+        messageEl.textContent = 'Signup successful! Redirecting...';
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
       }
     }
   </script>
 
 </body>
 </html>
+
