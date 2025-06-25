@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -46,19 +46,17 @@
     button:hover {
       background-color: #222222;
     }
-    .forgot-password,
-    .free-trial {
+    .contact {
       text-align: center;
       margin-top: 20px;
-    }
-    .forgot-password a,
-    .free-trial a {
       font-size: 16px;
+      color: #555;
+    }
+    .contact a {
       color: #000000;
       text-decoration: none;
     }
-    .forgot-password a:hover,
-    .free-trial a:hover {
+    .contact a:hover {
       text-decoration: underline;
     }
   </style>
@@ -72,15 +70,9 @@
       <button type="submit">Login</button>
     </form>
 
-    <!-- 🔐 Forgot Password -->
-    <div class="forgot-password">
-      <a href="#">Forgot your password?</a>
-    </div>
-
-    <!-- 💸 Free Trial -->
-    <div class="free-trial">
-      <p>Don’t have an account?</p>
-      <a href="https://buy.stripe.com/6oU7sLb6V168aUV5TIdQQ03" target="_blank">Start Your Free Trial</a>
+    <!-- 📬 Contact Info Only -->
+    <div class="contact">
+      <p>Need help? <a href="mailto:joel@cheeseburger.pro">Contact us</a></p>
     </div>
   </div>
 
@@ -108,3 +100,4 @@
   </script>
 </body>
 </html>
+
