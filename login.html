@@ -46,6 +46,18 @@
     button:hover {
       background-color: #e57c35;
     }
+    .trial-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .trial-link a {
+      color: #f7944e;
+      font-size: 16px;
+      text-decoration: none;
+    }
+    .trial-link a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -56,6 +68,11 @@
       <input type="password" id="password" placeholder="Temporary Password" required />
       <button type="submit">Login</button>
     </form>
+
+    <div class="trial-link">
+      <p>Don't have an account?</p>
+      <a href="https://buy.stripe.com/YOUR-STRIPE-LINK" target="_blank">Start Your Free Trial</a>
+    </div>
   </div>
 
   <script type="module">
