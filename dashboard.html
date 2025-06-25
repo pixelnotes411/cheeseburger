@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Cheeseburger Dashboard</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cheeseburger Dashboard</title>
+  <style>
     body {
       font-family: sans-serif;
-      background: #fff;
-      color: #000;
+      background: #f5f5f5;
+      color: #333;
       padding: 40px 20px;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
     h1 {
       font-size: 28px;
-      margin-bottom: 30px;
       text-align: center;
+      margin-bottom: 30px;
+    }
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
     }
     .section {
+      background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 30px;
     }
     h2 {
       font-size: 20px;
@@ -30,11 +35,11 @@
     }
     input {
       width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      background: #f3f3f3;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
       border: 1px solid #ccc;
-      margin-top: 8px;
+      border-radius: 6px;
     }
     button {
       background: black;
@@ -43,127 +48,97 @@
       padding: 10px 16px;
       font-size: 14px;
       cursor: pointer;
-      margin-top: 10px;
-      margin-right: 10px;
+      border-radius: 6px;
     }
-    .lead {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .lead span {
-      font-weight: bold;
-    }
-    .account button {
-      display: block;
-      width: fit-content;
-      margin-bottom: 10px;
-    }
-    .hidden {
-      display: none;
-    }
-</style>
+  </style>
 </head>
 <body>
-<h1>Cheeseburger Dashboard</h1>
 
-<!-- URL Input Section -->
-<div class="section">
-  <h2>Train Your Chatbot</h2>
-  <input id="urlInput" placeholder="Enter your website URL" type="text"/>
-  <br><br>
-  <input id="bookingLinkInput" placeholder="Enter your booking link (Calendly, etc.)" type="text"/>
-  <button onclick="confirmUrl()">Confirm</button>
-</div>
+  <h1>Cheeseburger Dashboard</h1>
 
-<!-- Button to View Leads -->
-<div class="section">
-  <button onclick="toggleLeads()">View Recent Leads</button>
-</div>
+  <div class="dashboard">
 
-<!-- Recent Leads Section -->
-<div class="section hidden" id="leadsSection">
-  <h2>Recent Leads</h2>
-  <div class="lead"><span>John Doe</span> – john@example.com – June 16, 2025, 4:45 PM</div>
-  <div class="lead"><span>Lisa A.</span> – lisa@domain.com – June 15, 2025, 10:17 AM</div>
-  <div class="lead"><span>Marcus G.</span> – marcus@abc.com – June 14, 2025, 8:02 AM</div>
-</div>
+    <!-- Section: Input Website and Booking -->
+    <div class="section">
+      <h2>Let’s Set Up Your Bot</h2>
+      <p>Paste in the website you want the bot to work on:</p>
+      <input type="text" id="urlInput" placeholder="e.g. https://weightloss.com" />
 
-<!-- Bonus Section -->
-<div class="section">
-  <h2>🎁 Beta Bonuses</h2>
-  <p>Drive more traffic to your bot with these free tools:</p>
-  <ul style="text-align: left; padding-left: 20px;">
-    <li><a href="#">📥 24 LinkedIn Post Ideas</a></li>
-    <li><a href="#">📥 30-Day LinkedIn Content Calendar</a></li>
-  </ul>
-</div>
+      <p>Paste your booking link (Calendly, Hubspot, etc):</p>
+      <input type="text" id="bookingLinkInput" placeholder="e.g. https://calendly.com/your-link" />
 
-<!-- Account Settings -->
-<div class="section account">
-  <h2>Account Settings</h2>
-  <p>Email: <span id="userEmail">Loading...</span></p>
-  <button onclick="window.location.href='/manage-billing-stripe.html'">Manage Billing</button>
-  <button onclick="window.location.href='/change-password.html'">Change Password</button>
-  <button onclick="window.location.href='/help.html'">Help</button>
-  <button onclick="logout()">Logout</button>
-  <button onclick="window.location.href='/delete-account.html'" style="color: red; background: transparent; border: 1px solid red;">Delete Account</button>
-</div>
+      <button onclick="confirmUrl()">Confirm</button>
+    </div>
 
-<script>
-async function confirmUrl() {
-  const url = document.getElementById('urlInput').value;
-  const booking = document.getElementById('bookingLinkInput').value;
-  if (!url) {
-    alert('Please enter a website URL.');
-    return;
-  }
+    <!-- Section: Bonuses -->
+    <div class="section">
+      <h2>🎁 Beta Bonuses</h2>
+      <p>Post on LinkedIn with these and start driving traffic:</p>
+      <ul>
+        <li><a href="#">📥 30 LinkedIn Post Ideas</a></li>
+        <li><a href="#">📥 Plug-and-Post Templates</a></li>
+      </ul>
+    </div>
 
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !session) {
-    alert('Session not found. Please log in again.');
-    return;
-  }
+    <!-- Section: Account -->
+    <div class="section">
+      <h2>Account</h2>
+      <p>Email: <span id="userEmail">Loading...</span></p>
+      <button onclick="logout()">Logout</button>
+    </div>
 
-  const userId = session.user.id;
+  </div>
 
-  const { error } = await supabase
-    .from('chatbots')
-    .insert([{ url: url, booking: booking, user_id: userId }]);
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  if (error) {
-    alert('Failed to save: ' + error.message);
-  } else {
-    window.location.href = "/cheeseburger-loading.html";
-  }
-}
-</script>
+    async function confirmUrl() {
+      const url = document.getElementById('urlInput').value;
+      const bookingLink = document.getElementById('bookingLinkInput').value;
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+      if (!url || !bookingLink) {
+        alert('Please enter both your website URL and booking link.');
+        return;
+      }
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        alert('Session not found. Please log in again.');
+        return;
+      }
 
-  async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.href = "/cheeseburger-login.html";
-    } else {
-      document.getElementById("userEmail").textContent = session.user.email;
+      const userId = session.user.id;
+
+      const { error } = await supabase
+        .from('chatbots')
+        .insert([{ url: url, booking_link: bookingLink, user_id: userId }]);
+
+      if (error) {
+        alert('Failed to save data: ' + error.message);
+      } else {
+        window.location.href = "/dashboard-loading.html";
+      }
     }
-  }
 
-  async function logout() {
-    await supabase.auth.signOut();
-    window.location.href = "/cheeseburger-login.html";
-  }
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "/cheeseburger-login.html";
+    }
 
-  window.onload = checkSession;
-</script>
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/cheeseburger-login.html";
+      } else {
+        document.getElementById("userEmail").textContent = session.user.email;
+      }
+    }
+
+    window.onload = checkSession;
+  </script>
+
 </body>
 </html>
-
-
-
-
