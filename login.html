@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -36,7 +36,7 @@
     button {
       width: 100%;
       padding: 12px;
-      background-color: #f7944e;
+      background-color: #000000;
       color: white;
       border: none;
       border-radius: 6px;
@@ -44,17 +44,20 @@
       cursor: pointer;
     }
     button:hover {
-      background-color: #e57c35;
+      background-color: #222222;
     }
+    .forgot-password,
     .free-trial {
       text-align: center;
       margin-top: 20px;
     }
+    .forgot-password a,
     .free-trial a {
       font-size: 16px;
-      color: #f7944e;
+      color: #000000;
       text-decoration: none;
     }
+    .forgot-password a:hover,
     .free-trial a:hover {
       text-decoration: underline;
     }
@@ -69,7 +72,12 @@
       <button type="submit">Login</button>
     </form>
 
-    <!-- 🔥 Your live Stripe trial link -->
+    <!-- 🔐 Forgot Password -->
+    <div class="forgot-password">
+      <a href="#">Forgot your password?</a>
+    </div>
+
+    <!-- 💸 Free Trial -->
     <div class="free-trial">
       <p>Don’t have an account?</p>
       <a href="https://buy.stripe.com/6oU7sLb6V168aUV5TIdQQ03" target="_blank">Start Your Free Trial</a>
