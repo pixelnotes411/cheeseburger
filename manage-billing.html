@@ -58,7 +58,7 @@
   </div>
 
   <div class="footer">
-    Need help? <a href="mailto:support@yourdomain.com">Contact Us</a>
+    Need help? <a href="mailto:joel@cheeseburger.pro">Contact Us</a>
   </div>
 
   <script>
@@ -66,11 +66,9 @@
       const response = await fetch('https://mihvjqzxgnhcdddbduak.supabase.co/functions/v1/create-portal-session', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          // Add Authorization header only if your function requires JWT
-          // 'Authorization': 'Bearer YOUR_SUPABASE_ANON_KEY'
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ customerId: 'cus_abc123' }) // Replace with real customer ID from Supabase
+        body: JSON.stringify({})
       });
 
       const data = await response.json();
