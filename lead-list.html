@@ -62,85 +62,65 @@
         <th>Date Captured</th>
       </tr>
     </thead>
-    <tbody id="leadsBody">
-      <!-- Leads will be inserted here dynamically -->
+    <tbody>
+      <tr>
+        <td><input type="checkbox" class="leadCheckbox"></td>
+        <td>John Doe</td>
+        <td>john@example.com</td>
+        <td>June 16, 2025</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" class="leadCheckbox"></td>
+        <td>Lisa A.</td>
+        <td>lisa@domain.com</td>
+        <td>June 15, 2025</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" class="leadCheckbox"></td>
+        <td>Marcus G.</td>
+        <td>marcus@abc.com</td>
+        <td>June 14, 2025</td>
+      </tr>
     </tbody>
   </table>
 
   <button class="export-btn" onclick="exportLeads()">Export CSV</button>
   <button class="delete-btn" onclick="deleteSelected()">Delete Selected</button>
 
-  <!-- Supabase and Data Script -->
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js'
-
-    const supabaseUrl = 'https://mihvjqzxgnhcdddbduak.supabase.co'
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI'
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    async function loadLeads() {
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .order('submitted_at', { ascending: false })
-
-      if (error) {
-        console.error('Error loading leads:', error)
-        return
-      }
-
-      const tbody = document.getElementById('leadsBody')
-      tbody.innerHTML = ''
-
-      data.forEach(lead => {
-        const row = document.createElement('tr')
-        row.innerHTML = `
-          <td><input type="checkbox" class="leadCheckbox"></td>
-          <td>${lead.name || ''}</td>
-          <td>${lead.email || ''}</td>
-          <td>${new Date(lead.submitted_at).toLocaleDateString()}</td>
-        `
-        tbody.appendChild(row)
-      })
-    }
-
-    loadLeads()
-  </script>
-
-  <!-- Utility functions -->
   <script>
     function toggleAll(source) {
-      const checkboxes = document.querySelectorAll('.leadCheckbox')
-      checkboxes.forEach(cb => cb.checked = source.checked)
+      const checkboxes = document.querySelectorAll('.leadCheckbox');
+      checkboxes.forEach(cb => cb.checked = source.checked);
     }
 
     function deleteSelected() {
-      const checkboxes = document.querySelectorAll('.leadCheckbox')
+      const checkboxes = document.querySelectorAll('.leadCheckbox');
       checkboxes.forEach(cb => {
         if (cb.checked) {
-          cb.closest('tr').remove()
+          cb.closest('tr').remove();
         }
-      })
+      });
     }
 
     function exportLeads() {
-      const rows = document.querySelectorAll('#leadsTable tr')
-      let csv = ''
-      rows.forEach((row, index) => {
-        if (index === 0) return
-        const cells = row.querySelectorAll('td')
+      const table = document.getElementById('leadsTable');
+      let csv = '';
+      for (let row of table.rows) {
+        if (row.rowIndex === 0) continue; // Skip header
+        const cells = row.querySelectorAll('td');
         if (cells.length >= 4) {
-          csv += `${cells[1].textContent},${cells[2].textContent},${cells[3].textContent}\n`
+          csv += cells[1].textContent + ',' + cells[2].textContent + ',' + cells[3].textContent + '\n';
         }
-      })
-      const blob = new Blob([csv], { type: 'text/csv' })
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = 'leads.csv'
-      link.click()
+      }
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'leads.csv';
+      link.click();
     }
   </script>
 
 </body>
 </html>
+
 
