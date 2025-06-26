@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,6 +43,10 @@
       margin-top: 40px;
       font-size: 14px;
     }
+    a {
+      color: #333;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -67,7 +70,7 @@
       const response = await fetch('/create-portal-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: 'cus_abc123' }) // Replace with actual customer ID
+        body: JSON.stringify({ customerId: 'cus_abc123' }) // Replace with dynamic customer ID in production
       });
 
       const data = await response.json();
@@ -81,3 +84,4 @@
 
 </body>
 </html>
+
