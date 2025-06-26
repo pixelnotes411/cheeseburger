@@ -58,8 +58,8 @@
       width: fit-content;
       margin-bottom: 10px;
     }
-    .hidden {
-      display: none;
+    a button {
+      text-decoration: none;
     }
   </style>
 </head>
@@ -77,15 +77,9 @@
 
 <!-- Button to View Leads -->
 <div class="section">
-  <button onclick="toggleLeads()">View Recent Leads</button>
-</div>
-
-<!-- Recent Leads Section -->
-<div class="section hidden" id="leadsSection">
-  <h2>Recent Leads</h2>
-  <div class="lead"><span>John Doe</span> – john@example.com – June 16, 2025, 4:45 PM</div>
-  <div class="lead"><span>Lisa A.</span> – lisa@domain.com – June 15, 2025, 10:17 AM</div>
-  <div class="lead"><span>Marcus G.</span> – marcus@abc.com – June 14, 2025, 8:02 AM</div>
+  <a href="/lead-list.html">
+    <button>View Recent Leads</button>
+  </a>
 </div>
 
 <!-- Bonus Section -->
@@ -109,45 +103,38 @@
   <button onclick="window.location.href='/delete-account.html'" style="color: red; background: transparent; border: 1px solid red;">Delete Account</button>
 </div>
 
-<script>
-async function confirmUrl() {
-  const url = document.getElementById('urlInput').value;
-  if (!url) {
-    alert('Please enter a website URL.');
-    return;
-  }
-
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !session) {
-    alert('Session not found. Please log in again.');
-    return;
-  }
-
-  const userId = session.user.id;
-
-  const { error } = await supabase
-    .from('chatbots')
-    .insert([{ url: url, user_id: userId }]);
-
-  if (error) {
-    alert('Failed to save chatbot URL: ' + error.message);
-  } else {
-    window.location.href = "/cheeseburger-loading.html";
-  }
-}
-
-function toggleLeads() {
-  const section = document.getElementById("leadsSection");
-  section.classList.toggle("hidden");
-}
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Use your actual anon key
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI';
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function confirmUrl() {
+    const url = document.getElementById('urlInput').value;
+    if (!url) {
+      alert('Please enter a website URL.');
+      return;
+    }
+
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      alert('Session not found. Please log in again.');
+      return;
+    }
+
+    const userId = session.user.id;
+
+    const { error } = await supabase
+      .from('chatbots')
+      .insert([{ url: url, user_id: userId }]);
+
+    if (error) {
+      alert('Failed to save chatbot URL: ' + error.message);
+    } else {
+      window.location.href = "/cheeseburger-loading.html";
+    }
+  }
 
   async function checkSession() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -167,4 +154,5 @@ function toggleLeads() {
 </script>
 </body>
 </html>
+
 
