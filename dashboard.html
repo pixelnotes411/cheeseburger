@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cheeseburger Dashboard</title>
   <style>
     body {
@@ -45,13 +45,6 @@
       cursor: pointer;
       margin-top: 10px;
       margin-right: 10px;
-    }
-    .lead {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .lead span {
-      font-weight: bold;
     }
     .account button {
       display: block;
@@ -111,9 +104,10 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function confirmUrl() {
-    const url = document.getElementById('urlInput').value;
-    if (!url) {
-      alert('Please enter a website URL.');
+    const url = document.getElementById('urlInput').value.trim();
+    const booking = document.getElementById('bookingLinkInput').value.trim();
+    if (!url || !booking) {
+      alert('Please enter both your website URL and booking link.');
       return;
     }
 
@@ -125,12 +119,29 @@
 
     const userId = session.user.id;
 
-    const { error } = await supabase
+    // Check if user already submitted
+    const { data: existing, error: fetchError } = await supabase
       .from('chatbots')
-      .insert([{ url: url, user_id: userId }]);
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (error) {
-      alert('Failed to save chatbot URL: ' + error.message);
+    if (fetchError) {
+      alert('Error checking chatbot status: ' + fetchError.message);
+      return;
+    }
+
+    if (existing) {
+      alert('You’ve already submitted your URL and booking link.');
+      return;
+    }
+
+    const { error: insertError } = await supabase
+      .from('chatbots')
+      .insert([{ url, booking, user_id: userId }]);
+
+    if (insertError) {
+      alert('Failed to save: ' + insertError.message);
     } else {
       window.location.href = "/cheeseburger-loading.html";
     }
@@ -154,5 +165,4 @@
 </script>
 </body>
 </html>
-
 
