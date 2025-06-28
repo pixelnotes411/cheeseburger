@@ -62,22 +62,25 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function checkSession() {
+    async function checkSessionAndRedirect() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         window.location.href = "/cheeseburger-login.html";
+        return;
       }
+
+      // Redirect to chatbot ready screen
+      setTimeout(() => {
+        window.location.href = "dashboard-ready.html";
+      }, 3000);
     }
 
-    checkSession();
-
-    setTimeout(() => {
-      window.location.href = "dashboard-ready.html";
-    }, 3000);
+    checkSessionAndRedirect();
   </script>
 
 </body>
 </html>
+
 
 
 
