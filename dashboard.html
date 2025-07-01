@@ -1,107 +1,9 @@
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cheeseburger Dashboard</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fff;
-      color: #000;
-      padding: 40px 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    .section {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 30px;
-    }
-    h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      background: #f3f3f3;
-      border: 1px solid #ccc;
-      margin-top: 8px;
-    }
-    button {
-      background: black;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 10px;
-      margin-right: 10px;
-    }
-    .account button {
-      display: block;
-      width: fit-content;
-      margin-bottom: 10px;
-    }
-    a button {
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-<h1>Cheeseburger Dashboard</h1>
-
-<!-- URL Input Section -->
-<div class="section">
-  <h2>Train Lisette</h2>
-  <input id="urlInput" placeholder="Enter your website URL" type="text"/>
-  <br><br>
-  <input id="bookingLinkInput" placeholder="Enter your booking link (Calendly, etc.)" type="text"/>
-  <button onclick="confirmUrl()">Confirm</button>
-</div>
-
-<!-- Button to View Leads -->
-<div class="section">
-  <a href="/lead-list.html">
-    <button>View Recent Leads</button>
-  </a>
-</div>
-
-<!-- Bonus Section -->
-<div class="section">
-  <h2>🏱 Beta Bonuses</h2>
-  <p>Drive more traffic with these free tools:</p>
-  <ul style="text-align: left; padding-left: 20px;">
-    <li><a href="https://drive.google.com/file/d/1bMFs4GBcT2Dk-w3Plm3IpqtcCgVfp9ev/view?usp=sharing" target="_blank">📅 LinkedIn Post Ideas</a></li>
-    <li><a href="https://drive.google.com/file/d/1i912lFB0jvZPGzvyCibRaY0Ys-_TnRd-/view?usp=sharing" target="_blank">📅 30-Day LinkedIn Content Calendar</a></li>
-  </ul>
-</div>
-
-<!-- Account Settings -->
-<div class="section account">
-  <h2>Account Settings</h2>
-  <p>Email: <span id="userEmail">Loading...</span></p>
-  <button onclick="window.location.href='/manage-billing.html'">Manage Billing</button>
-  <button onclick="window.location.href='/change-password.html'">Change Password</button>
-  <button onclick="window.location.href='/help.html'">Help</button>
-  <button onclick="logout()">Logout</button>
-  <button onclick="window.location.href='/delete-account.html'" style="color: red; background: transparent; border: 1px solid red;">Delete Account</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI';
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function confirmUrl() {
     const url = document.getElementById('urlInput').value.trim();
@@ -119,7 +21,6 @@
 
     const userId = user.id;
 
-    // Check if already submitted
     const { data: existing, error: fetchError } = await supabase
       .from('chatbots')
       .select('id')
@@ -136,7 +37,6 @@
       return;
     }
 
-    // Save to Supabase
     const { error: insertError } = await supabase
       .from('chatbots')
       .insert([{ url, booking_link: booking, user_id: userId }]);
@@ -146,7 +46,6 @@
       return;
     }
 
-    // Trigger chatbot creation
     const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-bot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -177,8 +76,7 @@
 
   window.onload = checkSession;
 </script>
-</body>
-</html>
+
 
 
 
