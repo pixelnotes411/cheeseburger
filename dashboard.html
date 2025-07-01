@@ -111,13 +111,13 @@
       return;
     }
 
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !session) {
-      alert('Session not found. Please log in again.');
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      alert('User not found. Please log in again.');
       return;
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
 
     // Check if already submitted
     const { data: existing, error: fetchError } = await supabase
@@ -139,7 +139,7 @@
     // Save to Supabase
     const { error: insertError } = await supabase
       .from('chatbots')
-      .insert([{ url, booking, user_id: userId }]);
+      .insert([{ url, booking_link: booking, user_id: userId }]);
 
     if (insertError) {
       alert('Failed to save: ' + insertError.message);
@@ -179,6 +179,7 @@
 </script>
 </body>
 </html>
+
 
 
 
