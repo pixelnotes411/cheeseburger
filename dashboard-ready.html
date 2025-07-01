@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -54,7 +54,7 @@
 
   <div class="section">
     <h2>🎉 Lisette is ready to go!</h2>
-    <p>Here’s your custom chatbot code. Just copy and paste this into your website before the closing <code>&lt;/body&gt;</code> tag.</p>
+    <p>Here’s your custom chatbot code. Copy and paste it into your website before the closing <code>&lt;/body&gt;</code> tag.</p>
     <pre id="chatbotCode">Loading your Lisette script...</pre>
     <button onclick="copyCode()">Copy to Clipboard</button>
   </div>
@@ -79,10 +79,10 @@
         .from('chatbots')
         .select('chatbot_code')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error || !data) {
-        document.getElementById("chatbotCode").textContent = "Error loading Lisette script.";
+      if (error || !data || !data.chatbot_code) {
+        document.getElementById("chatbotCode").textContent = "⚠️ Lisette's script could not be loaded. Please try again later or contact support.";
         return;
       }
 
@@ -101,6 +101,3 @@
 
 </body>
 </html>
-
-
-
