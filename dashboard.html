@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -99,9 +99,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://mihvjqzxgnhcdddbduak.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // ✅ FIXED LINE
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function confirmUrl() {
     const url = document.getElementById('urlInput').value.trim();
@@ -119,6 +119,7 @@
 
     const userId = user.id;
 
+    // Check if already submitted
     const { data: existing, error: fetchError } = await supabase
       .from('chatbots')
       .select('id')
@@ -135,6 +136,7 @@
       return;
     }
 
+    // Save to Supabase
     const { error: insertError } = await supabase
       .from('chatbots')
       .insert([{ url, booking_link: booking, user_id: userId }]);
@@ -144,6 +146,7 @@
       return;
     }
 
+    // Trigger chatbot creation
     const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-bot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -176,6 +179,7 @@
 </script>
 </body>
 </html>
+
 
 
 
