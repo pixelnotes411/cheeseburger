@@ -51,7 +51,7 @@
 
   <div class="section">
     <h2>Lisette is getting ready…</h2>
-    <p>We’re setting everything up right now based on your site and booking link.<br>It usually takes just a few moments.</p>
+    <p>We’re setting everything up right now based on your site and booking link.<br>This usually takes under a minute.</p>
     <div class="spinner"></div>
   </div>
 
@@ -62,44 +62,45 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function checkSessionAndPollBot() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+    async function checkSessionAndPoll() {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
         window.location.href = "/cheeseburger-login.html";
         return;
       }
 
       const userId = session.user.id;
 
-      async function poll() {
-        const { data, error } = await supabase
-          .from('chatbots')
-          .select('chatbot_code')
-          .eq('user_id', userId)
-          .maybeSingle();
+      async function pollForChatbot() {
+        try {
+          const { data, error } = await supabase
+            .from('chatbots')
+            .select('chatbot_code')
+            .eq('user_id', userId)
+            .maybeSingle();
 
-        if (error) {
-          console.error('Error checking chatbot:', error.message);
-          setTimeout(poll, 3000);
-          return;
-        }
+          if (error) throw error;
 
-        if (data && data.chatbot_code) {
-          window.location.href = "/dashboard-ready.html";
-        } else {
-          setTimeout(poll, 3000); // keep checking every 3 seconds
+          if (data?.chatbot_code) {
+            window.location.href = "/dashboard-ready.html";
+          } else {
+            setTimeout(pollForChatbot, 3000);
+          }
+        } catch (err) {
+          console.error('Polling error:', err.message);
+          setTimeout(pollForChatbot, 3000);
         }
       }
 
-      poll();
+      pollForChatbot();
     }
 
-    checkSessionAndPollBot();
+    checkSessionAndPoll();
   </script>
 
 </body>
 </html>
-
 
 
 
