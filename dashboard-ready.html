@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -81,12 +81,14 @@
         .eq('user_id', userId)
         .maybeSingle();
 
+      const codeBlock = document.getElementById("chatbotCode");
+
       if (error || !data || !data.chatbot_code) {
-        document.getElementById("chatbotCode").textContent = "⚠️ Lisette's script could not be loaded. Please try again later or contact support.";
+        codeBlock.textContent = "⚠️ Lisette's script could not be loaded. Please try again later or contact support.";
         return;
       }
 
-      document.getElementById("chatbotCode").textContent = data.chatbot_code;
+      codeBlock.textContent = data.chatbot_code;
     }
 
     function copyCode() {
@@ -101,3 +103,4 @@
 
 </body>
 </html>
+
