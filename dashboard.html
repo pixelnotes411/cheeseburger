@@ -77,7 +77,7 @@
 
 <!-- Bonus Section -->
 <div class="section">
-  <h2>🏡 Beta Bonuses</h2>
+  <h2>🏱 Beta Bonuses</h2>
   <p>Drive more traffic with these free tools:</p>
   <ul style="text-align: left; padding-left: 20px;">
     <li><a href="https://drive.google.com/file/d/1bMFs4GBcT2Dk-w3Plm3IpqtcCgVfp9ev/view?usp=sharing" target="_blank">📅 LinkedIn Post Ideas</a></li>
@@ -151,7 +151,7 @@
       }
     }
 
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-bot`, {
+    const response = await fetch(${SUPABASE_URL}/functions/v1/generate-bot, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId, url, booking })
@@ -183,7 +183,6 @@
 </script>
 </body>
 </html>
-
 
 
 
