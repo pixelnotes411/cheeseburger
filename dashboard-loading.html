@@ -62,20 +62,39 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function checkSessionAndRedirect() {
+    async function checkSessionAndPollBot() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         window.location.href = "/cheeseburger-login.html";
         return;
       }
 
-      // Simulate processing delay before showing ready page
-      setTimeout(() => {
-        window.location.href = "dashboard-ready.html";
-      }, 3000);
+      const userId = session.user.id;
+
+      async function poll() {
+        const { data, error } = await supabase
+          .from('chatbots')
+          .select('chatbot_code')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error checking chatbot:', error.message);
+          setTimeout(poll, 3000);
+          return;
+        }
+
+        if (data && data.chatbot_code) {
+          window.location.href = "/dashboard-ready.html";
+        } else {
+          setTimeout(poll, 3000); // keep checking every 3 seconds
+        }
+      }
+
+      poll();
     }
 
-    checkSessionAndRedirect();
+    checkSessionAndPollBot();
   </script>
 
 </body>
