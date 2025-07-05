@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lead List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            margin-left: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lead List</h1>
+    <div class="btn-container">
+        <button class="btn" onclick="selectAll()">Select All</button>
+        <button class="btn" onclick="exportCSV()">Export</button>
+    </div>
+    <table id="leadTable">
+        <thead>
+            <tr>
+                <th><input type="checkbox" onclick="toggleAll(this)"></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Short Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>Jane Doe</td>
+                <td>jane@example.com</td>
+                <td>(555) 123-4567</td>
+                <td>Interested in Monday slots</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>John Smith</td>
+                <td>john@example.com</td>
+                <td>(555) 987-6543</td>
+                <td>Asked for a follow-up next week</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function toggleAll(source) {
+            checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        function selectAll() {
+            document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => cb.checked = true);
+        }
+
+        function exportCSV() {
+            let table = document.getElementById("leadTable");
+            let rows = table.querySelectorAll("tr");
+            let csv = [];
+
+            for (let row of rows) {
+                let cols = row.querySelectorAll("td, th");
+                let rowData = [];
+                for (let col of cols) {
+                    rowData.push(col.innerText);
+                }
+                csv.push(rowData.join(","));
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "lead_list.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

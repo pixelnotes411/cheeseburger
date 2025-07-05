@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Billing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button, a.button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        button:hover, a.button:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        a {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Billing</h1>
+
+        <section class="info">
+            <h2>Account Summary</h2>
+            <p><strong>Plan:</strong> Basic</p>
+            <p><strong>Monthly Cost:</strong> $27</p>
+            <p><strong>Next Billing Date:</strong> August 4, 2025</p>
+            <p><strong>Status:</strong> Active</p>
+        </section>
+
+        <section>
+            <h2>Billing Portal</h2>
+            <p>You can manage your payment method and subscription using Stripe.</p>
+            <a class="button" href="https://billing.stripe.com/p/login/test_portal_link" target="_blank">
+                Manage Billing via Stripe
+            </a>
+        </section>
+
+        <section class="info">
+            <h2>Usage Summary</h2>
+            <p><strong>Hours Used:</strong> 3</p>
+            <p><strong>Hours Remaining:</strong> 2</p>
+            <p><strong>Billing Cycle Resets:</strong> August 1, 2025</p>
+        </section>
+
+        <section>
+            <h2>Profile Settings</h2>
+            <label>Name</label>
+            <input type="text" value="Joel Gali">
+
+            <label>Email</label>
+            <input type="email" value="joel@cheeseburger.pro">
+
+            <label>Timezone</label>
+            <select>
+                <option selected>EST (New York)</option>
+                <option>PST (Los Angeles)</option>
+                <option>CST (Chicago)</option>
+                <option>MST (Denver)</option>
+            </select>
+
+            <button>Update Settings</button>
+        </section>
+
+        <section>
+            <h2>Subscription Actions</h2>
+            <button>Upgrade Plan</button>
+            <button>Cancel Subscription</button>
+            <button>Download Invoices</button>
+        </section>
+
+        <section>
+            <p>Need help? <a href="mailto:joel@cheeseburger.pro">Contact support</a></p>
+        </section>
+    </div>
+</body>
+</html>

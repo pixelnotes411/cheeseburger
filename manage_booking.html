@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Your Booking</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .details {
+      background: #f0f0f0;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.25rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+    .btn.cancel {
+      background-color: #dc3545;
+    }
+    form {
+      margin-top: 2rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Manage Your Booking</h2>
+    <div class="details">
+      <p><strong>Booking with:</strong> Joel from Cheeseburger</p>
+      <p><strong>Date:</strong> July 12, 2025</p>
+      <p><strong>Time:</strong> 2:00 PM (EST)</p>
+    </div>
+    <form>
+      <label for="new-date">Select a New Date</label>
+      <input type="date" id="new-date" name="new-date" />
+
+      <label for="new-time">Select a New Time</label>
+      <input type="time" id="new-time" name="new-time" />
+
+      <button class="btn" type="submit">Reschedule Booking</button>
+    </form>
+    <br />
+    <form>
+      <button class="btn cancel" type="submit">Cancel Booking</button>
+    </form>
+  </div>
+</body>
+</html>
