@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,8 +65,8 @@
 <body>
 
   <header>
-    <h1>Meeting with [Name]</h1>
-    <p>July 7th at 7:00 PM</p>
+    <h1 id="meeting-title">Meeting with Guest</h1>
+    <p id="meeting-time">Loading...</p>
   </header>
 
   <div class="video-container">
@@ -86,6 +85,14 @@
   </div>
 
   <script>
+    // Load dynamic meeting info from query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get("name") || "Guest";
+    const time = urlParams.get("time") || new Date().toLocaleString();
+
+    document.getElementById("meeting-title").textContent = `Meeting with ${name}`;
+    document.getElementById("meeting-time").textContent = time;
+
     // Dummy timer logic
     let seconds = 0;
     const timer = document.getElementById("duration");
@@ -109,3 +116,4 @@
 
 </body>
 </html>
+
