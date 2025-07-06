@@ -1,6 +1,4 @@
-
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -24,86 +22,119 @@
     .exception-box { background: #fff8dc; border: 1px solid #eee; padding: 10px; margin-top: 10px; border-radius: 8px; }
     .past-call { border-top: 1px solid #ddd; padding: 10px 0; }
     .past-call strong { display: block; margin-top: 5px; }
-  </style>
+</style>
 </head>
 <body>
 <header>
 <h1>Cheeseburger Dashboard</h1>
 <div>
-<button>📋 Copy Booking Link</button>
-<button>Logout</button>
+  <button>📋 Copy Booking Link</button>
+  <button onclick="logout()">Logout</button>
 </div>
 </header>
 <div class="main">
-<div class="section">
-<h2>👋 Welcome back, Joel</h2>
-<div class="tracker">🎯 You’ve taken 8 of 15 calls this month</div>
-<div class="tracker">🔥 3 hrs 45 mins of 10 hrs used</div>
-<button>⚙️ Upgrade Plan</button>
+  <div class="section">
+    <h2 id="welcome-msg">👋 Welcome back</h2>
+    <div class="tracker">🎯 You’ve taken 8 of 15 calls this month</div>
+    <div class="tracker">🔥 3 hrs 45 mins of 10 hrs used</div>
+    <button>⚙️ Upgrade Plan</button>
+  </div>
+
+  <div class="section">
+    <h2>Your Booking Link</h2>
+    <div class="link-box">https://cheeseburger.pro/joel</div>
+  </div>
+
+  <div class="section">
+    <h2>Booking Preferences</h2>
+    <label>Display Name</label>
+    <input type="text" value="Joel the Closer"/>
+    <label>Booking Prompt</label>
+    <input type="text" value="What do you want to talk about?"/>
+    <label>Call Duration Limit</label>
+    <select>
+      <option>30 min</option>
+      <option>45 min</option>
+      <option selected="">60 min</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h2>Availability</h2>
+    <label>Available Days</label>
+    <input type="text" value="Monday to Friday"/>
+    <label>Time Range</label>
+    <input type="text" value="9AM - 5PM"/>
+    <label>Timezone</label>
+    <input type="text" value="Eastern (EDT)"/>
+  </div>
+
+  <div class="section">
+    <h2>Exceptions / Overrides</h2>
+    <div class="exception-box">📅 July 4 – Unavailable</div>
+    <div class="exception-box">📅 July 10 – Available from 1PM to 3PM</div>
+    <div class="exception-box">📅 July 12 – Blocked for Vacation</div>
+    <button>➕ Add Exception</button>
+  </div>
+
+  <div class="section">
+    <h2>Upcoming Bookings</h2>
+    <ul>
+      <li>📅 July 9, 2PM with Sarah T. (60 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
+      <li>📅 July 10, 11AM with Mike R. (30 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🧠 Past Calls & Summaries</h2>
+    <div class="past-call">
+      📅 July 2 – Sarah T. (60 min)<br/>
+      <strong>Topics:</strong> onboarding, budget issues<br/>
+      <strong>AI Summary:</strong> Asked about onboarding delays, pricing flexibility, and post-sale support.<br/>
+      <button>View Transcript</button> <button>Download Recording</button>
+    </div>
+    <div class="past-call">
+      📅 June 28 – Marcus B. (30 min)<br/>
+      <strong>Topics:</strong> integrations, demos<br/>
+      <strong>AI Summary:</strong> Walked through live demo and answered setup questions.<br/>
+      <button>View Transcript</button> <button>Download Recording</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Account Controls</h2>
+    <div class="button-group">
+      <button>Manage Billing</button>
+      <button onclick="window.location.href='change-password.html'">Change Password</button>
+      <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
+      <button onclick="location.href='lead-list.html'">Lead List</button>
+    </div>
+  </div>
 </div>
-<div class="section">
-<h2>Your Booking Link</h2>
-<div class="link-box">https://cheeseburger.pro/joel</div>
-</div>
-<div class="section">
-<h2>Booking Preferences</h2>
-<label>Display Name</label>
-<input type="text" value="Joel the Closer"/>
-<label>Booking Prompt</label>
-<input type="text" value="What do you want to talk about?"/>
-<label>Call Duration Limit</label>
-<select>
-<option>30 min</option>
-<option>45 min</option>
-<option selected="">60 min</option>
-</select>
-</div>
-<div class="section">
-<h2>Availability</h2>
-<label>Available Days</label>
-<input type="text" value="Monday to Friday"/>
-<label>Time Range</label>
-<input type="text" value="9AM - 5PM"/>
-<label>Timezone</label>
-<input type="text" value="Eastern (EDT)"/>
-</div>
-<div class="section">
-<h2>Exceptions / Overrides</h2>
-<div class="exception-box">📅 July 4 – Unavailable</div>
-<div class="exception-box">📅 July 10 – Available from 1PM to 3PM</div>
-<div class="exception-box">📅 July 12 – Blocked for Vacation</div>
-<button>➕ Add Exception</button>
-</div>
-<div class="section">
-<h2>Upcoming Bookings</h2>
-<ul>
-<li>📅 July 9, 2PM with Sarah T. (60 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
-<li>📅 July 10, 11AM with Mike R. (30 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
-</ul>
-</div>
-<div class="section">
-<h2>🧠 Past Calls &amp; Summaries</h2>
-<div class="past-call">
-        📅 July 2 – Sarah T. (60 min)<br/>
-<strong>Topics:</strong> onboarding, budget issues<br/>
-<strong>AI Summary:</strong> Asked about onboarding delays, pricing flexibility, and post-sale support.<br/>
-<button>View Transcript</button> <button>Download Recording</button>
-</div>
-<div class="past-call">
-        📅 June 28 – Marcus B. (30 min)<br/>
-<strong>Topics:</strong> integrations, demos<br/>
-<strong>AI Summary:</strong> Walked through live demo and answered setup questions.<br/>
-<button>View Transcript</button> <button>Download Recording</button>
-</div>
-</div>
-<div class="section">
-<h2>Account Controls</h2>
-<div class="button-group">
-<button>Manage Billing</button>
-<button>Change Password</button>
-<button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
-<button onclick="location.href='lead-list.html'">Lead List</button></div>
-</div>
-</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js"></script>
+<script>
+  const supabase = supabase.createClient(
+    "https://mihvjqzxgnhcdddbduak.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  );
+
+  async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("welcome-msg").innerText = "👋 Welcome back, " + (user.email || "User");
+    }
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    window.location.href = "index.html";
+  }
+
+  checkAuth();
+</script>
 </body>
 </html>
+
