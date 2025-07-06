@@ -102,7 +102,11 @@
       const notes = document.getElementById("notes").value;
       const booking_time = `${date} ${time}`;
 
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError
+      } = await supabase.auth.getUser();
+
       if (!user || userError) {
         alert("You must be logged in to book a call.");
         return;
@@ -139,4 +143,5 @@
   </script>
 </body>
 </html>
+
 
