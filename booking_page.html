@@ -137,8 +137,14 @@
         return;
       }
 
-      document.getElementById("success-msg").textContent = "✅ Booking confirmed!";
-      document.getElementById("booking-form").reset();
+      // Redirect with booking details in query string
+      const params = new URLSearchParams({
+        name: client_name,
+        date,
+        time,
+        link: booking_link
+      });
+      window.location.href = `booking-confirmed.html?${params.toString()}`;
     });
   </script>
 </body>
