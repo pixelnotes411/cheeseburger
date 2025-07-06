@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -151,7 +151,10 @@
     if (data && !error && data.length) {
       data.forEach(booking => {
         const li = document.createElement("li");
-        li.innerHTML = `📅 ${booking.booking_time} with ${booking.client_name} – <strong>Cheeseburger Room</strong> – <button>Join Call</button>`;
+        const urlName = encodeURIComponent(booking.client_name);
+        const urlTime = encodeURIComponent(booking.booking_time);
+        const joinLink = `video-call.html?name=${urlName}&time=${urlTime}`;
+        li.innerHTML = `📅 ${booking.booking_time} with ${booking.client_name} – <strong>Cheeseburger Room</strong> – <a href="${joinLink}"><button>Join Call</button></a>`;
         list.appendChild(li);
       });
     } else {
