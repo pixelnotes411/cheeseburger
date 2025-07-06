@@ -113,7 +113,7 @@
       }
 
       const user_id = user.id;
-      const booking_link = "https://cheeseburger.pro/joel";
+      const booking_link = `https://cheeseburger.pro/${user.email.split('@')[0]}`;
 
       const { error: bookingError } = await supabase.from("bookings").insert([{
         user_id,
@@ -143,5 +143,6 @@
   </script>
 </body>
 </html>
+
 
 
