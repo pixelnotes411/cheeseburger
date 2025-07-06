@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,21 +41,26 @@
       font-size: 16px;
     }
     button {
-      background-color: #3b82f6;
+      background-color: #000;
       color: white;
       font-weight: bold;
       border: none;
       cursor: pointer;
     }
     button:hover {
-      background-color: #2563eb;
+      opacity: 0.9;
+    }
+    .success-msg {
+      text-align: center;
+      color: green;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div class="booking-container">
     <h2>Book a Call</h2>
-    <form>
+    <form id="booking-form">
       <label for="name">Full Name</label>
       <input type="text" id="name" placeholder="John Doe" required>
 
@@ -76,7 +80,63 @@
       <textarea id="notes" rows="4" placeholder="What would you like to discuss?"></textarea>
 
       <button type="submit">Confirm Booking</button>
+      <div class="success-msg" id="success-msg"></div>
     </form>
   </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    const supabase = supabase.createClient(
+      "https://mihvjqzxgnhcdddbduak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    );
+
+    document.getElementById("booking-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const client_name = document.getElementById("name").value;
+      const client_email = document.getElementById("email").value;
+      const client_phone = document.getElementById("phone").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const notes = document.getElementById("notes").value;
+      const booking_time = `${date} ${time}`;
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (!user || userError) {
+        alert("You must be logged in to book a call.");
+        return;
+      }
+
+      const user_id = user.id;
+      const booking_link = "https://cheeseburger.pro/joel";
+
+      const { error: bookingError } = await supabase.from("bookings").insert([{
+        user_id,
+        client_name,
+        client_email,
+        client_phone,
+        booking_time,
+        booking_link
+      }]);
+
+      const { error: leadError } = await supabase.from("leads").insert([{
+        user_id,
+        name: client_name,
+        email: client_email,
+        phone: client_phone,
+        notes
+      }]);
+
+      if (bookingError || leadError) {
+        alert("Something went wrong. Please try again.");
+        return;
+      }
+
+      document.getElementById("success-msg").textContent = "✅ Booking confirmed!";
+      document.getElementById("booking-form").reset();
+    });
+  </script>
 </body>
 </html>
+
