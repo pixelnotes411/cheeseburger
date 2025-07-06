@@ -28,21 +28,21 @@
 <header>
 <h1>Cheeseburger Dashboard</h1>
 <div>
-  <button>📋 Copy Booking Link</button>
+  <button onclick="copyBookingLink()">📋 Copy Booking Link</button>
   <button onclick="logout()">Logout</button>
 </div>
 </header>
 <div class="main">
   <div class="section">
     <h2 id="welcome-msg">👋 Welcome back</h2>
-    <div class="tracker">🎯 You’ve taken 8 of 15 calls this month</div>
-    <div class="tracker">🔥 3 hrs 45 mins of 10 hrs used</div>
+    <div id="call-stats" class="tracker">🎯 Loading call stats...</div>
+    <div id="hour-stats" class="tracker">🔥 Loading hour stats...</div>
     <button>⚙️ Upgrade Plan</button>
   </div>
 
   <div class="section">
     <h2>Your Booking Link</h2>
-    <div class="link-box">https://cheeseburger.pro/joel</div>
+    <div id="booking-link" class="link-box">Loading...</div>
   </div>
 
   <div class="section">
@@ -79,9 +79,8 @@
 
   <div class="section">
     <h2>Upcoming Bookings</h2>
-    <ul>
-      <li>📅 July 9, 2PM with Sarah T. (60 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
-      <li>📅 July 10, 11AM with Mike R. (30 min) – <strong>Cheeseburger Room</strong> – <button>Join Call</button></li>
+    <ul id="upcoming-bookings">
+      <li>Loading bookings...</li>
     </ul>
   </div>
 
@@ -104,8 +103,8 @@
   <div class="section">
     <h2>Account Controls</h2>
     <div class="button-group">
-      <button>Manage Billing</button>
-      <button onclick="window.location.href='change-password.html'">Change Password</button>
+      <button onclick="location.href='manage-billing.html'">Manage Billing</button>
+      <button onclick="location.href='change-password.html'">Change Password</button>
       <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
       <button onclick="location.href='lead-list.html'">Lead List</button>
     </div>
@@ -120,12 +119,15 @@
   );
 
   async function checkAuth() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (!user || error) {
       window.location.href = "index.html";
-    } else {
-      document.getElementById("welcome-msg").innerText = "👋 Welcome back, " + (user.email || "User");
+      return;
     }
+    document.getElementById("welcome-msg").innerText = "👋 Welcome back, " + user.email;
+    document.getElementById("booking-link").innerText = `https://cheeseburger.pro/${user.email.split('@')[0]}`;
+    loadStats(user.id);
+    loadBookings(user.id);
   }
 
   async function logout() {
@@ -133,8 +135,39 @@
     window.location.href = "index.html";
   }
 
+  async function loadStats(user_id) {
+    const { data, error } = await supabase.from("bookings").select("*").eq("user_id", user_id);
+    if (data && !error) {
+      const count = data.length;
+      document.getElementById("call-stats").innerText = `🎯 You’ve taken ${count} of 15 calls this month`;
+      document.getElementById("hour-stats").innerText = `🔥 ${count} hrs of 10 hrs used`;
+    }
+  }
+
+  async function loadBookings(user_id) {
+    const { data, error } = await supabase.from("bookings").select("*").eq("user_id", user_id).order("booking_time");
+    const list = document.getElementById("upcoming-bookings");
+    list.innerHTML = "";
+    if (data && !error && data.length) {
+      data.forEach(booking => {
+        const li = document.createElement("li");
+        li.innerHTML = `📅 ${booking.booking_time} with ${booking.client_name} – <strong>Cheeseburger Room</strong> – <button>Join Call</button>`;
+        list.appendChild(li);
+      });
+    } else {
+      list.innerHTML = "<li>No upcoming bookings</li>";
+    }
+  }
+
+  function copyBookingLink() {
+    const link = document.getElementById("booking-link").innerText;
+    navigator.clipboard.writeText(link);
+    alert("Booking link copied!");
+  }
+
   checkAuth();
 </script>
 </body>
 </html>
+
 
