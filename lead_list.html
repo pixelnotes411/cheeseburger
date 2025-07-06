@@ -1,121 +1,146 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Lead List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .btn-container {
-            margin-top: 20px;
-            text-align: right;
-        }
-        .btn {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 16px;
-            margin-left: 10px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Lead List</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #333;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .btn-container {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .btn {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      margin-left: 10px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <h1>Lead List</h1>
-    <div class="btn-container">
-        <button class="btn" onclick="selectAll()">Select All</button>
-        <button class="btn" onclick="exportCSV()">Export</button>
-    </div>
-    <table id="leadTable">
-        <thead>
-            <tr>
-                <th><input type="checkbox" onclick="toggleAll(this)"></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Short Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td>Jane Doe</td>
-                <td>jane@example.com</td>
-                <td>(555) 123-4567</td>
-                <td>Interested in Monday slots</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td>John Smith</td>
-                <td>john@example.com</td>
-                <td>(555) 987-6543</td>
-                <td>Asked for a follow-up next week</td>
-            </tr>
-        </tbody>
-    </table>
+  <h1>Lead List</h1>
+  <div class="btn-container">
+    <button class="btn" onclick="selectAll()">Select All</button>
+    <button class="btn" onclick="exportCSV()">Export</button>
+  </div>
+  <table id="leadTable">
+    <thead>
+      <tr>
+        <th><input type="checkbox" onclick="toggleAll(this)"></th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Short Notes</th>
+      </tr>
+    </thead>
+    <tbody id="lead-body">
+      <!-- Leads will be inserted here -->
+    </tbody>
+  </table>
 
-    <script>
-        function toggleAll(source) {
-            checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = source.checked;
-            }
+  <script>
+    const supabase = supabase.createClient(
+      "https://mihvjqzxgnhcdddbduak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
+    );
+
+    async function fetchLeads() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Not logged in");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const tbody = document.getElementById("lead-body");
+      tbody.innerHTML = "";
+
+      data.forEach(lead => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><input type="checkbox"></td>
+          <td>${lead.name}</td>
+          <td>${lead.email}</td>
+          <td>${lead.phone}</td>
+          <td>${lead.notes || ""}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function toggleAll(source) {
+      document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => cb.checked = source.checked);
+    }
+
+    function selectAll() {
+      document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => cb.checked = true);
+    }
+
+    function exportCSV() {
+      let table = document.getElementById("leadTable");
+      let rows = table.querySelectorAll("tr");
+      let csv = [];
+
+      for (let row of rows) {
+        let cols = row.querySelectorAll("td, th");
+        let rowData = [];
+        for (let col of cols) {
+          rowData.push(col.innerText);
         }
+        csv.push(rowData.join(","));
+      }
 
-        function selectAll() {
-            document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => cb.checked = true);
-        }
+      let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "lead_list.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
-        function exportCSV() {
-            let table = document.getElementById("leadTable");
-            let rows = table.querySelectorAll("tr");
-            let csv = [];
-
-            for (let row of rows) {
-                let cols = row.querySelectorAll("td, th");
-                let rowData = [];
-                for (let col of cols) {
-                    rowData.push(col.innerText);
-                }
-                csv.push(rowData.join(","));
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-            let encodedUri = encodeURI(csvContent);
-            let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "lead_list.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
+    fetchLeads();
+  </script>
 </body>
 </html>
