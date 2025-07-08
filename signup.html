@@ -108,7 +108,13 @@
         return;
       }
 
-      await supabase.from("users").insert([{ email }]);
+      await supabase.from("users").insert([
+        {
+          email,
+          stripe_price_id: "price_1RiUTTRVy9ZkCyWQvMiVYiPb",        // $47 plan
+          stripe_addon_price_id: "price_1RiUWcRVy9ZkCyWQg93WVAyS"    // $9 add-on
+        }
+      ]);
 
       alert("Signup successful! Temporary password: " + tempPassword);
       window.location.href = "login.html";
@@ -116,4 +122,5 @@
   </script>
 </body>
 </html>
+
 
