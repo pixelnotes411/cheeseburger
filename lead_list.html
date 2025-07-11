@@ -24,6 +24,7 @@
       border: 1px solid #ddd;
       padding: 12px;
       text-align: left;
+      vertical-align: top;
     }
     th {
       background-color: #333;
@@ -45,6 +46,18 @@
       text-decoration: none;
       cursor: pointer;
     }
+    textarea {
+      width: 100%;
+      height: 60px;
+    }
+    .save-btn {
+      margin-top: 6px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -60,7 +73,7 @@
         <th>Name</th>
         <th>Email</th>
         <th>Phone Number</th>
-        <th>Short Notes</th>
+        <th>Notes</th>
       </tr>
     </thead>
     <tbody id="lead-body">
@@ -102,10 +115,30 @@
           <td>${lead.name}</td>
           <td>${lead.email}</td>
           <td>${lead.phone}</td>
-          <td>${lead.notes || ""}</td>
+          <td>
+            <textarea id="note-${lead.id}">${lead.notes || ""}</textarea>
+            <button class="save-btn" onclick="saveNote('${lead.id}')">Save</button>
+          </td>
         `;
         tbody.appendChild(row);
       });
+    }
+
+    async function saveNote(leadId) {
+      const textarea = document.getElementById(`note-${leadId}`);
+      const noteValue = textarea.value;
+
+      const { error } = await supabase
+        .from("leads")
+        .update({ notes: noteValue })
+        .eq("id", leadId);
+
+      if (error) {
+        alert("Error saving note");
+        console.error(error);
+      } else {
+        alert("Note saved");
+      }
     }
 
     function toggleAll(source) {
@@ -125,7 +158,7 @@
         let cols = row.querySelectorAll("td, th");
         let rowData = [];
         for (let col of cols) {
-          rowData.push(col.innerText);
+          rowData.push(col.innerText.replace(/\n/g, " ").trim());
         }
         csv.push(rowData.join(","));
       }
@@ -144,3 +177,4 @@
   </script>
 </body>
 </html>
+
