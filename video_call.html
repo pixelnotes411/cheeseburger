@@ -68,16 +68,15 @@
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
-    const room = urlParams.get("room") || "Cheesburger";
+    const room = encodeURIComponent(urlParams.get("room") || "Cheesburger");
+
+    // Hide Daily.co structure from users
+    const hiddenDailyUrl = `https://cheeseburgerpro.daily.co/${room}`;
 
     document.getElementById("meeting-title").textContent = `Meeting with ${name}`;
     document.getElementById("meeting-time").textContent = time;
+    document.getElementById("video-iframe").src = hiddenDailyUrl;
 
-    // Build hidden room URL
-    const dailyURL = `https://cheeseburgerpro.daily.co/${room}`;
-    document.getElementById("video-iframe").src = dailyURL;
-
-    // Timer
     let seconds = 0;
     const timer = document.getElementById("duration");
     setInterval(() => {
