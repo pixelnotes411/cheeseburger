@@ -57,7 +57,6 @@
     <div class="timer">Meeting Duration: <span id="duration">00:00</span></div>
     <iframe
       id="video-iframe"
-      src="https://cheeseburgerpro.daily.co/Cheesburger"
       allow="camera; microphone; fullscreen; display-capture"
     ></iframe>
     <div class="footer">
@@ -66,15 +65,19 @@
   </div>
 
   <script>
-    // Get meeting info from query string
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
+    const room = urlParams.get("room") || "Cheesburger";
 
     document.getElementById("meeting-title").textContent = `Meeting with ${name}`;
     document.getElementById("meeting-time").textContent = time;
 
-    // Timer logic
+    // Build hidden room URL
+    const dailyURL = `https://cheeseburgerpro.daily.co/${room}`;
+    document.getElementById("video-iframe").src = dailyURL;
+
+    // Timer
     let seconds = 0;
     const timer = document.getElementById("duration");
     setInterval(() => {
@@ -87,6 +90,7 @@
 
 </body>
 </html>
+
 
 
 
