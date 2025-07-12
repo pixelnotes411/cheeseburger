@@ -24,7 +24,6 @@
       border: 1px solid #ddd;
       padding: 12px;
       text-align: left;
-      vertical-align: top;
     }
     th {
       background-color: #333;
@@ -46,17 +45,8 @@
       text-decoration: none;
       cursor: pointer;
     }
-    textarea {
-      width: 100%;
-      height: 60px;
-    }
-    .save-btn {
-      margin-top: 6px;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      cursor: pointer;
+    select {
+      padding: 4px;
     }
   </style>
 </head>
@@ -73,7 +63,8 @@
         <th>Name</th>
         <th>Email</th>
         <th>Phone Number</th>
-        <th>Notes</th>
+        <th>Short Notes</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody id="lead-body">
@@ -115,29 +106,30 @@
           <td>${lead.name}</td>
           <td>${lead.email}</td>
           <td>${lead.phone}</td>
+          <td>${lead.notes || ""}</td>
           <td>
-            <textarea id="note-${lead.id}">${lead.notes || ""}</textarea>
-            <button class="save-btn" onclick="saveNote('${lead.id}')">Save</button>
+            <select onchange="updateStatus('${lead.id}', this.value)">
+              <option value="New" ${lead.status === "New" ? "selected" : ""}>New</option>
+              <option value="Interested" ${lead.status === "Interested" ? "selected" : ""}>Interested</option>
+              <option value="Follow-up" ${lead.status === "Follow-up" ? "selected" : ""}>Follow-up</option>
+              <option value="Closed" ${lead.status === "Closed" ? "selected" : ""}>Closed</option>
+              <option value="No-show" ${lead.status === "No-show" ? "selected" : ""}>No-show</option>
+            </select>
           </td>
         `;
         tbody.appendChild(row);
       });
     }
 
-    async function saveNote(leadId) {
-      const textarea = document.getElementById(`note-${leadId}`);
-      const noteValue = textarea.value;
-
+    async function updateStatus(leadId, newStatus) {
       const { error } = await supabase
         .from("leads")
-        .update({ notes: noteValue })
+        .update({ status: newStatus })
         .eq("id", leadId);
 
       if (error) {
-        alert("Error saving note");
-        console.error(error);
-      } else {
-        alert("Note saved");
+        console.error("Error updating status:", error);
+        alert("Failed to update status");
       }
     }
 
@@ -177,5 +169,6 @@
   </script>
 </body>
 </html>
+
 
 
