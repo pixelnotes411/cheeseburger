@@ -37,7 +37,7 @@
       word-break: break-word;
     }
     .btn {
-      background: #4CAF50;
+      background: #000;
       color: white;
       padding: 0.75rem 1.5rem;
       text-decoration: none;
@@ -51,7 +51,7 @@
 <body>
   <div class="container">
     <h1>✅ You're Booked!</h1>
-    <p>Thanks for booking your call. Here are the details:</p>
+    <p id="greeting">Thanks for booking your call.</p>
     <div class="meeting-info">
       <strong>Date:</strong> <span id="confirmed-date">Loading...</span><br />
       <strong>Time:</strong> <span id="confirmed-time">Loading...</span><br />
@@ -63,12 +63,13 @@
   </div>
 
   <script>
-    // Extract info from query params if passed
-    const urlParams = new URLSearchParams(window.location.search);
-    const date = urlParams.get("date") || "Not provided";
-    const time = urlParams.get("time") || "Not provided";
-    const link = urlParams.get("link") || "https://cheeseburger.pro/video-call.html";
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name") || "Guest";
+    const date = params.get("date") || "Not provided";
+    const time = params.get("time") || "Not provided";
+    const link = params.get("link") || "https://cheeseburger.pro/video-call.html";
 
+    document.getElementById("greeting").textContent = `Thanks for booking your call, ${name}.`;
     document.getElementById("confirmed-date").textContent = date;
     document.getElementById("confirmed-time").textContent = time;
     document.getElementById("meeting-link").href = link;
