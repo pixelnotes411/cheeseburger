@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -28,29 +28,13 @@
       justify-content: center;
       padding: 1rem;
     }
-    .video-frame {
-      width: 90%;
-      height: 60vh;
-      background-color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ccc;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-    }
-    .controls {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    button {
-      padding: 0.5rem 1rem;
+    iframe {
+      width: 100%;
+      max-width: 900px;
+      height: 70vh;
       border: none;
-      border-radius: 6px;
-      background-color: #2563eb;
-      color: white;
-      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
     .footer {
       text-align: center;
@@ -71,21 +55,18 @@
 
   <div class="video-container">
     <div class="timer">Meeting Duration: <span id="duration">00:00</span></div>
-    <div class="video-frame" id="video-area">
-      [100ms Video Player Loads Here]
-    </div>
-    <div class="controls">
-      <button onclick="toggleMic()">🎤 Mute/Unmute</button>
-      <button onclick="toggleCamera()">📷 On/Off</button>
-      <button onclick="endCall()">❌ End Call</button>
-    </div>
+    <iframe
+      id="video-iframe"
+      src="https://cheeseburgerpro.daily.co/Cheesburger"
+      allow="camera; microphone; fullscreen; display-capture"
+    ></iframe>
     <div class="footer">
       <a href="mailto:joel@cheeseburger.pro">Having trouble? Contact Support</a>
     </div>
   </div>
 
   <script>
-    // Load dynamic meeting info from query params
+    // Get meeting info from query string
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
@@ -102,21 +83,10 @@
       const sec = String(seconds % 60).padStart(2, "0");
       timer.textContent = `${min}:${sec}`;
     }, 1000);
-
-    function toggleMic() {
-      alert("Mic toggled (connect this to 100ms SDK)");
-    }
-
-    function toggleCamera() {
-      alert("Camera toggled (connect this to 100ms SDK)");
-    }
-
-    function endCall() {
-      alert("Ending call (hook into 100ms to leave the room)");
-    }
   </script>
 
 </body>
 </html>
+
 
 
