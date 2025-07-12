@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -91,6 +91,10 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     );
 
+    function generateRoomId() {
+      return 'room-' + Math.random().toString(36).substring(2, 10);
+    }
+
     document.getElementById("booking-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -101,6 +105,7 @@
       const time = document.getElementById("time").value;
       const notes = document.getElementById("notes").value;
       const booking_time = `${date} ${time}`;
+      const room_id = generateRoomId();
 
       const {
         data: { user },
@@ -113,7 +118,7 @@
       }
 
       const user_id = user.id;
-      const booking_link = `https://cheeseburger.pro/${user.email.split('@')[0]}`;
+      const booking_link = `https://cheeseburger.pro/video-call.html?name=${encodeURIComponent(client_name)}&time=${encodeURIComponent(booking_time)}&room=${encodeURIComponent(room_id)}`;
 
       const { error: bookingError } = await supabase.from("bookings").insert([{
         user_id,
@@ -121,7 +126,8 @@
         client_email,
         client_phone,
         booking_time,
-        booking_link
+        booking_link,
+        room_id
       }]);
 
       const { error: leadError } = await supabase.from("leads").insert([{
@@ -137,17 +143,20 @@
         return;
       }
 
+      // Redirect to confirmation
       const params = new URLSearchParams({
         name: client_name,
         date,
         time,
-        link: booking_link
+        link: booking_link,
+        room: room_id
       });
       window.location.href = `booking-confirmed.html?${params.toString()}`;
     });
   </script>
 </body>
 </html>
+
 
 
 
