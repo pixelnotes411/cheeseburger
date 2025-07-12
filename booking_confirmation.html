@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -67,7 +67,9 @@
     const name = params.get("name") || "Guest";
     const date = params.get("date") || "Not provided";
     const time = params.get("time") || "Not provided";
-    const link = params.get("link") || "https://cheeseburger.pro/video-call.html";
+    const room = params.get("room") || "Cheeseburger"; // fallback for now
+
+    const link = `https://cheeseburger.pro/video-call.html?room=${room}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(date + ' ' + time)}`;
 
     document.getElementById("greeting").textContent = `Thanks for booking your call, ${name}.`;
     document.getElementById("confirmed-date").textContent = date;
@@ -78,3 +80,4 @@
   </script>
 </body>
 </html>
+
