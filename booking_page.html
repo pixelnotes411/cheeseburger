@@ -92,7 +92,12 @@
     );
 
     function generateRoomId() {
-      return 'room-' + Math.random().toString(36).substring(2, 10);
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let result = 'cb-';
+      for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
     }
 
     document.getElementById("booking-form").addEventListener("submit", async (e) => {
@@ -156,6 +161,7 @@
   </script>
 </body>
 </html>
+
 
 
 
