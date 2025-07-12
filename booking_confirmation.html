@@ -67,16 +67,16 @@
     const name = params.get("name") || "Guest";
     const date = params.get("date") || "Not provided";
     const time = params.get("time") || "Not provided";
-    const room = params.get("room") || "Cheeseburger"; // fallback for now
+    const room = params.get("room") || "Cheeseburger"; // fallback default
 
-    const link = `https://cheeseburger.pro/video-call.html?room=${room}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(date + ' ' + time)}`;
+    const videoURL = `/video-call.html?room=${room}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(date + ' ' + time)}`;
 
     document.getElementById("greeting").textContent = `Thanks for booking your call, ${name}.`;
     document.getElementById("confirmed-date").textContent = date;
     document.getElementById("confirmed-time").textContent = time;
-    document.getElementById("meeting-link").href = link;
-    document.getElementById("meeting-link").textContent = link;
-    document.getElementById("join-call-btn").href = link;
+    document.getElementById("meeting-link").href = videoURL;
+    document.getElementById("meeting-link").textContent = videoURL;
+    document.getElementById("join-call-btn").href = videoURL;
   </script>
 </body>
 </html>
