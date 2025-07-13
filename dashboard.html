@@ -19,9 +19,6 @@
     ul { list-style: none; padding-left: 0; }
     li { margin-bottom: 10px; }
     .button-group { margin-top: 10px; }
-    .exception-box { background: #fff8dc; border: 1px solid #eee; padding: 10px; margin-top: 10px; border-radius: 8px; }
-    .past-call { border-top: 1px solid #ddd; padding: 10px 0; }
-    .past-call strong { display: block; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -49,9 +46,9 @@
     <div class="section">
       <h2>Booking Preferences</h2>
       <label>Display Name</label>
-      <input type="text" id="display-name" value="Joel the Closer"/>
+      <input type="text" id="display-name"/>
       <label>Booking Prompt</label>
-      <input type="text" id="booking-prompt" value="What do you want to talk about?"/>
+      <input type="text" id="booking-prompt"/>
       <label>Call Duration Limit</label>
       <select id="duration-limit">
         <option>30 min</option>
@@ -64,33 +61,11 @@
     <div class="section">
       <h2>Availability</h2>
       <label>Available Days</label>
-      <input type="text" id="available-days" value="Monday to Friday"/>
+      <input type="text" id="available-days"/>
       <label>Time Range</label>
-      <input type="text" id="time-range" value="9AM - 5PM"/>
+      <input type="text" id="time-range"/>
       <label>Timezone</label>
-      <input type="text" id="timezone" value="Eastern (EDT)"/>
-    </div>
-
-    <div class="section">
-      <h2>Exceptions / Overrides</h2>
-      <div class="exception-box">🗓️ July 4 – Unavailable</div>
-      <div class="exception-box">🗓️ July 10 – Available from 1PM to 3PM</div>
-      <div class="exception-box">🗓️ July 12 – Blocked for Vacation</div>
-      <button>➕ Add Exception</button>
-    </div>
-
-    <div class="section">
-      <h2>📞 Past Calls</h2>
-      <div class="past-call">
-        🗓️ July 2 – Sarah T. (60 min)<br/>
-        <strong>Topics:</strong> onboarding, budget issues<br/>
-        <button>View Transcript</button> <button>Download Recording</button>
-      </div>
-      <div class="past-call">
-        🗓️ June 28 – Marcus B. (30 min)<br/>
-        <strong>Topics:</strong> integrations, demos<br/>
-        <button>View Transcript</button> <button>Download Recording</button>
-      </div>
+      <input type="text" id="timezone"/>
     </div>
 
     <div class="section">
@@ -115,7 +90,7 @@
   <script>
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "YOUR_SUPABASE_ANON_KEY"
     );
 
     async function checkAuth() {
@@ -124,10 +99,12 @@
         window.location.href = "index.html";
         return;
       }
+
       document.getElementById("welcome-msg").innerText = "👋 Welcome back, " + user.email;
       document.getElementById("booking-link").innerText = `https://cheeseburger.pro/${user.email.split('@')[0]}`;
       loadStats(user.id);
       loadBookings(user.id);
+      loadPreferences(user.id);
     }
 
     async function logout() {
@@ -151,9 +128,7 @@
       if (data && !error && data.length) {
         data.forEach(booking => {
           const li = document.createElement("li");
-          const urlName = encodeURIComponent(booking.client_name);
-          const urlTime = encodeURIComponent(booking.booking_time);
-          const joinLink = `video-call.html?name=${urlName}&time=${urlTime}`;
+          const joinLink = `video-call.html?name=${encodeURIComponent(booking.client_name)}&time=${encodeURIComponent(booking.booking_time)}`;
           li.innerHTML = `🗓️ ${booking.booking_time} with ${booking.client_name} – <strong>Cheeseburger Room</strong> – <a href="${joinLink}"><button>Join Call</button></a>`;
           list.appendChild(li);
         });
@@ -162,14 +137,35 @@
       }
     }
 
+    async function loadPreferences(user_id) {
+      const { data, error } = await supabase.from("preferences").select("*").eq("user_id", user_id).single();
+      if (data && !error) {
+        document.getElementById("display-name").value = data.display_name || "";
+        document.getElementById("booking-prompt").value = data.booking_prompt || "";
+        document.getElementById("available-days").value = data.available_days || "";
+        document.getElementById("time-range").value = data.time_range || "";
+        document.getElementById("timezone").value = data.timezone || "";
+      }
+    }
+
+    async function savePreferences() {
+      const user = (await supabase.auth.getUser()).data.user;
+      const payload = {
+        user_id: user.id,
+        display_name: document.getElementById("display-name").value,
+        booking_prompt: document.getElementById("booking-prompt").value,
+        available_days: document.getElementById("available-days").value,
+        time_range: document.getElementById("time-range").value,
+        timezone: document.getElementById("timezone").value
+      };
+      await supabase.from("preferences").upsert(payload, { onConflict: ['user_id'] });
+      alert("Preferences saved!");
+    }
+
     function copyBookingLink() {
       const link = document.getElementById("booking-link").innerText;
       navigator.clipboard.writeText(link);
       alert("Booking link copied!");
-    }
-
-    function savePreferences() {
-      alert("Preferences saved (this is a placeholder function).");
     }
 
     checkAuth();
