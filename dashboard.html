@@ -35,7 +35,7 @@
       <h2 id="welcome-msg">👋 Welcome back</h2>
       <div id="call-stats" class="tracker">🎯 Loading call stats...</div>
       <div id="hour-stats" class="tracker">🔥 Loading hour stats...</div>
-      <button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">🕒 Buy More Time</button>
+      <div id="action-buttons"></div>
     </div>
 
     <div class="section">
@@ -105,6 +105,28 @@
       loadStats(user.id);
       loadBookings(user.id);
       loadPreferences(user.id);
+      showButtons(user.id); // 🧠 Inject proper upgrade button
+    }
+
+    async function showButtons(user_id) {
+      const { data, error } = await supabase
+        .from("users")
+        .select("plan_type")
+        .eq("id", user_id)
+        .single();
+
+      const container = document.getElementById("action-buttons");
+      if (error || !data) return;
+
+      if (data.plan_type === "free") {
+        container.innerHTML = `
+          <button onclick="location.href='https://buy.stripe.com/dRm3cv16ccEb6BEgoReUU01'">⚙️ Unlock Full Access</button>
+        `;
+      } else if (data.plan_type === "paid") {
+        container.innerHTML = `
+          <button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">🕒 Buy 5 Extra Hours</button>
+        `;
+      }
     }
 
     async function logout() {
@@ -172,6 +194,7 @@
   </script>
 </body>
 </html>
+
 
 
 
