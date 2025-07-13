@@ -148,7 +148,6 @@
         return;
       }
 
-      // Redirect to confirmation
       const params = new URLSearchParams({
         name: client_name,
         date,
@@ -156,11 +155,13 @@
         link: booking_link,
         room: room_id
       });
+
       window.location.href = `booking-confirmed.html?${params.toString()}`;
     });
   </script>
 </body>
 </html>
+
 
 
 
