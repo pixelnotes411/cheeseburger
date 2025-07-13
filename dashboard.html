@@ -1,8 +1,9 @@
+<!-- BEGIN DASHBOARD HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cheeseburger Dashboard</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; color: #333; }
@@ -105,27 +106,18 @@
       loadStats(user.id);
       loadBookings(user.id);
       loadPreferences(user.id);
-      showButtons(user.id); // 🧠 Inject proper upgrade button
+      showButtons(user.id);
     }
 
     async function showButtons(user_id) {
-      const { data, error } = await supabase
-        .from("users")
-        .select("plan_type")
-        .eq("id", user_id)
-        .single();
-
+      const { data, error } = await supabase.from("users").select("plan_type").eq("id", user_id).single();
       const container = document.getElementById("action-buttons");
       if (error || !data) return;
 
       if (data.plan_type === "free") {
-        container.innerHTML = `
-          <button onclick="location.href='https://buy.stripe.com/dRm3cv16ccEb6BEgoReUU01'">⚙️ Unlock Full Access</button>
-        `;
+        container.innerHTML = `<button onclick="location.href='https://buy.stripe.com/dRm3cv16ccEb6BEgoReUU01'">⚙️ Unlock Full Access</button>`;
       } else if (data.plan_type === "paid") {
-        container.innerHTML = `
-          <button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">🕒 Buy 5 Extra Hours</button>
-        `;
+        container.innerHTML = `<button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">🕒 Buy 5 Extra Hours</button>`;
       }
     }
 
@@ -194,6 +186,8 @@
   </script>
 </body>
 </html>
+<!-- END DASHBOARD HTML -->
+
 
 
 
