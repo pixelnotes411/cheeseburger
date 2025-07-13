@@ -67,9 +67,10 @@
     const name = params.get("name") || "Guest";
     const date = params.get("date") || "Not provided";
     const time = params.get("time") || "Not provided";
-    const room = params.get("room") || "Cheeseburger"; // fallback default
+    const room = params.get("room") || "Cheeseburger";
 
-    const videoURL = `/video-call.html?room=${room}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(date + ' ' + time)}`;
+    const combinedTime = `${date} ${time}`;
+    const videoURL = `/video-call.html?room=${encodeURIComponent(room)}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(combinedTime)}`;
 
     document.getElementById("greeting").textContent = `Thanks for booking your call, ${name}.`;
     document.getElementById("confirmed-date").textContent = date;
@@ -80,4 +81,5 @@
   </script>
 </body>
 </html>
+
 
