@@ -58,6 +58,7 @@
     <iframe
       id="video-iframe"
       allow="camera; microphone; fullscreen; display-capture"
+      allowfullscreen
     ></iframe>
     <div class="footer">
       <a href="mailto:joel@cheeseburger.pro">Having trouble? Contact Support</a>
@@ -68,14 +69,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
-    const room = encodeURIComponent(urlParams.get("room") || "Cheeseburger");
+    const room = urlParams.get("room") || "default-room";
 
-    // Build hidden Daily room URL
-    const hiddenDailyUrl = `https://cheeseburgerpro.daily.co/${room}`;
+    const dailyRoomUrl = `https://cheeseburgerpro.daily.co/${encodeURIComponent(room)}`;
 
     document.getElementById("meeting-title").textContent = `Meeting with ${name}`;
-    document.getElementById("meeting-time").textContent = time;
-    document.getElementById("video-iframe").src = hiddenDailyUrl;
+    document.getElementById("meeting-time").textContent = `Scheduled at: ${time}`;
+    document.getElementById("video-iframe").src = dailyRoomUrl;
 
     // Timer logic
     let seconds = 0;
