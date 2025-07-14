@@ -1,3 +1,5 @@
+<!-- REPLACE YOUR CURRENT DASHBOARD HTML WITH THIS -->
+<!-- Starts below -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,7 +117,6 @@
       if (trialExpired) {
         document.getElementById("trial-expired").style.display = "block";
         document.getElementById("dashboard-content").style.display = "none";
-        document.getElementById("action-buttons").innerHTML = `<button onclick="location.href='https://buy.stripe.com/dRm3cv16ccEb6BEgoReUU01'">⚙️ Upgrade Now</button>`;
         return;
       }
 
@@ -124,18 +125,38 @@
       loadStats(user.id);
       loadBookings(user.id);
       loadPreferences(user.id);
-      showButtons(user.id);
+      showButtons(user.id, user.email);
     }
 
-    async function showButtons(user_id) {
+    async function showButtons(user_id, user_email) {
       const { data, error } = await supabase.from("users").select("plan_type").eq("id", user_id).single();
       const container = document.getElementById("action-buttons");
       if (error || !data) return;
+
       if (data.plan_type === "free") {
-        container.innerHTML = `<button onclick="location.href='https://buy.stripe.com/dRm3cv16ccEb6BEgoReUU01'">⚙️ Unlock Full Access</button>`;
+        container.innerHTML = `
+          <button onclick="createStripeSession('upgrade')">⚙️ Unlock Full Access</button>
+        `;
       } else {
-        container.innerHTML = `<button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">🕒 Buy 5 Extra Hours</button>`;
+        container.innerHTML = `
+          <button onclick="createStripeSession('addon')">🕒 Buy 5 Extra Hours</button>
+          <button onclick="alert('You have full access. Usage limits reset monthly.')">📊 View Usage</button>
+        `;
       }
+    }
+
+    async function createStripeSession(type) {
+      const user = (await supabase.auth.getUser()).data.user;
+      const sessionType = type === "upgrade" ? "upgrade" : "addon";
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: { user_id: user.id, type: sessionType },
+      });
+
+      if (error) {
+        alert("Failed to start checkout.");
+        return;
+      }
+      window.location.href = data.session_url;
     }
 
     async function logout() {
@@ -147,8 +168,9 @@
       const { data, error } = await supabase.from("bookings").select("*").eq("user_id", user_id);
       if (data && !error) {
         const count = data.length;
+        const duration = data.reduce((sum, b) => sum + (b.duration || 0), 0);
         document.getElementById("call-stats").innerText = `🎯 You’ve taken ${count} of 15 calls this month`;
-        document.getElementById("hour-stats").innerText = `🔥 ${count} hrs of 10 hrs used`;
+        document.getElementById("hour-stats").innerText = `🔥 ${duration} mins of 600 mins used`;
       }
     }
 
