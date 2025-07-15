@@ -1,5 +1,3 @@
-<!-- REPLACE YOUR CURRENT DASHBOARD HTML WITH THIS -->
-<!-- Starts below -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,21 +5,21 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Cheeseburger Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; color: #333; }
-    header { background: #222; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { margin: 0; font-size: 24px; }
-    .main { max-width: 900px; margin: auto; padding: 30px; }
-    .section { background: white; padding: 25px; margin-top: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-    h2 { margin-top: 0; font-size: 20px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input[type="text"], select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; }
-    .link-box { background: #eee; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
-    .tracker { background: #dff0d8; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 10px; }
-    button { margin: 5px 5px 0 0; padding: 10px 20px; border: none; background: #333; color: white; border-radius: 8px; cursor: pointer; }
-    ul { list-style: none; padding-left: 0; }
-    li { margin-bottom: 10px; }
-    .button-group { margin-top: 10px; }
-    #trial-expired { background: #ffdddd; padding: 20px; border-radius: 10px; color: #900; font-weight: bold; display: none; }
+    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0; color:#333; }
+    header { background:#222; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { margin:0; font-size:24px; }
+    .main { max-width:900px; margin:auto; padding:30px; }
+    .section { background:#fff; padding:25px; margin-top:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.05); }
+    h2 { margin-top:0; font-size:20px; }
+    label { display:block; margin-top:10px; font-weight:bold; }
+    input[type="text"], select { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:8px; }
+    .link-box { background:#eee; padding:10px; border-radius:8px; margin-top:10px; font-size:14px; }
+    .tracker { background:#dff0d8; padding:15px; border-radius:8px; font-weight:bold; margin-top:10px; }
+    button { margin:5px 5px 0 0; padding:10px 20px; border:none; background:#333; color:#fff; border-radius:8px; cursor:pointer; }
+    ul { list-style:none; padding-left:0; }
+    li { margin-bottom:10px; }
+    .button-group { margin-top:10px; }
+    #trial-expired { background:#ffdddd; padding:20px; border-radius:10px; color:#900; font-weight:bold; display:none; }
   </style>
 </head>
 <body>
@@ -125,23 +123,20 @@
       loadStats(user.id);
       loadBookings(user.id);
       loadPreferences(user.id);
-      showButtons(user.id, user.email);
+      showButtons(user.id);
     }
 
-    async function showButtons(user_id, user_email) {
+    async function showButtons(user_id) {
       const { data, error } = await supabase.from("users").select("plan_type").eq("id", user_id).single();
       const container = document.getElementById("action-buttons");
       if (error || !data) return;
 
       if (data.plan_type === "free") {
-        container.innerHTML = `
-          <button onclick="createStripeSession('upgrade')">⚙️ Unlock Full Access</button>
-        `;
+        container.innerHTML = `<button onclick="createStripeSession('upgrade')">⚙️ Unlock Full Access</button>`;
       } else {
         container.innerHTML = `
           <button onclick="createStripeSession('addon')">🕒 Buy 5 Extra Hours</button>
-          <button onclick="alert('You have full access. Usage limits reset monthly.')">📊 View Usage</button>
-        `;
+          <button onclick="alert('✅ You have full access. Your limits reset monthly.')">📊 View Usage</button>`;
       }
     }
 
@@ -151,9 +146,8 @@
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: { user_id: user.id, type: sessionType },
       });
-
       if (error) {
-        alert("Failed to start checkout.");
+        alert("❌ Failed to start checkout.");
         return;
       }
       window.location.href = data.session_url;
@@ -212,19 +206,20 @@
         timezone: document.getElementById("timezone").value
       };
       await supabase.from("preferences").upsert(payload, { onConflict: ['user_id'] });
-      alert("Preferences saved!");
+      alert("✅ Preferences saved!");
     }
 
     function copyBookingLink() {
       const link = document.getElementById("booking-link").innerText;
       navigator.clipboard.writeText(link);
-      alert("Booking link copied!");
+      alert("✅ Booking link copied!");
     }
 
     checkAuth();
   </script>
 </body>
 </html>
+
 
 
 
