@@ -24,6 +24,13 @@
     #trial-expired { background:#ffdddd; padding:20px; border-radius:10px; color:#900; font-weight:bold; display:none; margin-bottom:20px; }
     #upgrade-banner { display:none; background:#ffe9a7; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #f1c40f; }
     #upgrade-banner button { background:#f39c12; }
+    .support-box {
+      background:#f1f1f1;
+      padding:10px;
+      border-radius:8px;
+      margin-top:8px;
+      display:inline-block;
+    }
   </style>
 </head>
 <body>
@@ -36,7 +43,6 @@
   </header>
 
   <div class="main">
-    <!-- Banner appears when minutes are used up -->
     <div id="upgrade-banner">
       🚫 Your free 30 minutes are up. Upgrade now to keep booking.<br>
       If you don’t upgrade or cancel, you’ll be charged after 2 days.
@@ -96,7 +102,16 @@
           <button onclick="location.href='manage-billing.html'">Manage Billing</button>
           <button onclick="upgradeNow()">Upgrade Plan</button>
           <button onclick="location.href='change-password.html'">Change Password</button>
-          <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
+          <!-- replaced contact support button with copy/paste friendly version -->
+        </div>
+        <div class="support-box">
+          📧 Need help? Email us at: <strong>joel@cheeseburger.pro</strong><br>
+          <button onclick="copySupportEmail()">📋 Copy Support Email</button>
+          <p style="font-size:14px;color:#555;margin-top:6px;">
+            (Copy this email and paste it into your preferred email app.)
+          </p>
+        </div>
+        <div class="button-group" style="margin-top:10px;">
           <button onclick="location.href='lead-list.html'">Lead List</button>
         </div>
       </div>
@@ -120,6 +135,11 @@
       alert("✅ Booking link copied!");
     }
 
+    function copySupportEmail() {
+      navigator.clipboard.writeText('joel@cheeseburger.pro');
+      alert('✅ Support email copied! Paste it into your email app.');
+    }
+
     function upgradeNow() {
       window.location.href = "https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00";
     }
@@ -135,14 +155,13 @@
       }
     }
 
-    // Example popup when trying to book
     function attemptBooking() {
       if (document.getElementById('upgrade-banner').style.display === 'block') {
         alert("🚫 Your free 30 minutes are up. Upgrade now to keep booking. If you don’t upgrade or cancel, you’ll be charged after 2 days.");
         upgradeNow();
         return;
       }
-      // Otherwise, proceed to booking flow
+      // Otherwise proceed
     }
 
     checkUsageAndShowBanner();
