@@ -4,24 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Cheeseburger Dashboard</title>
-
-  <!-- Supabase client and early redirect -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script type="module">
-    const supabase = supabase.createClient(
-      "https://mihvjqzxgnhcdddbduak.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
-    );
-
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        // Immediately redirect if not logged in
-        window.location.href = "login.html";
-      }
-    })();
-  </script>
-
   <style>
     body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0; color:#333; }
     header { background:#222; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
@@ -38,7 +21,9 @@
     ul { list-style:none; padding-left:0; }
     li { margin-bottom:10px; }
     .button-group { margin-top:10px; }
-    #trial-expired { background:#ffdddd; padding:20px; border-radius:10px; color:#900; font-weight:bold; display:none; }
+    #trial-expired { background:#ffdddd; padding:20px; border-radius:10px; color:#900; font-weight:bold; display:none; margin-bottom:20px; }
+    #upgrade-banner { display:none; background:#ffe9a7; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #f1c40f; }
+    #upgrade-banner button { background:#f39c12; }
   </style>
 </head>
 <body>
@@ -51,6 +36,14 @@
   </header>
 
   <div class="main">
+    <!-- Banner appears when minutes are used up -->
+    <div id="upgrade-banner">
+      🚫 Your free 30 minutes are up. Upgrade now to keep booking.<br>
+      If you don’t upgrade or cancel, you’ll be charged after 2 days.
+      <br><br>
+      <button onclick="upgradeNow()">🔥 Upgrade Now</button>
+    </div>
+
     <div id="trial-expired">🚫 Your free trial has ended. Please upgrade to continue using Cheeseburger.</div>
     <div id="dashboard-content">
       <div class="section">
@@ -101,7 +94,6 @@
         <h2>Account Controls</h2>
         <div class="button-group">
           <button onclick="location.href='manage-billing.html'">Manage Billing</button>
-          <!-- New Upgrade button -->
           <button onclick="upgradeNow()">Upgrade Plan</button>
           <button onclick="location.href='change-password.html'">Change Password</button>
           <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
@@ -129,11 +121,31 @@
     }
 
     function upgradeNow() {
-      // ✅ Wired to your $47/month Stripe checkout link
       window.location.href = "https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00";
     }
 
-    // your existing loadStats, loadBookings, savePreferences, etc. stay the same
+    async function checkUsageAndShowBanner() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await supabase.from('bookings').select('duration').eq('user_id', user.id);
+      if (error || !data) return;
+      const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
+      if (totalMinutes >= 30) {
+        document.getElementById('upgrade-banner').style.display = 'block';
+      }
+    }
+
+    // Example popup when trying to book
+    function attemptBooking() {
+      if (document.getElementById('upgrade-banner').style.display === 'block') {
+        alert("🚫 Your free 30 minutes are up. Upgrade now to keep booking. If you don’t upgrade or cancel, you’ll be charged after 2 days.");
+        upgradeNow();
+        return;
+      }
+      // Otherwise, proceed to booking flow
+    }
+
+    checkUsageAndShowBanner();
     checkAuth();
   </script>
 </body>
