@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Video Call Room</title>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,6 +45,33 @@
       font-weight: bold;
       margin-bottom: 1rem;
     }
+    .banner {
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 900px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+    .block {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .banner button {
+      margin-top: 10px;
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -54,6 +82,7 @@
   </header>
 
   <div class="video-container">
+    <div id="usage-banner"></div>
     <div class="timer">Meeting Duration: <span id="duration">00:00</span></div>
     <iframe
       id="video-iframe"
@@ -66,6 +95,11 @@
   </div>
 
   <script>
+    const supabase = supabase.createClient(
+      "https://mihvjqzxgnhcdddbduak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
+    );
+
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
@@ -77,7 +111,6 @@
     document.getElementById("meeting-time").textContent = `Scheduled at: ${time}`;
     document.getElementById("video-iframe").src = dailyRoomUrl;
 
-    // Timer logic
     let seconds = 0;
     const timer = document.getElementById("duration");
     setInterval(() => {
@@ -86,6 +119,35 @@
       const sec = String(seconds % 60).padStart(2, "0");
       timer.textContent = `${min}:${sec}`;
     }, 1000);
+
+    async function checkUsageAndWarn() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase.from('bookings').select('duration').eq('user_id', user.id);
+      if (error || !data) return;
+
+      const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
+      const banner = document.getElementById('usage-banner');
+
+      if (totalMinutes >= 30) {
+        banner.innerHTML = `
+          <div class="banner block">
+            🚫 You’ve used all 30 free minutes.<br>
+            Upgrade to continue hosting calls.<br>
+            <button onclick="location.href='https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00'">Upgrade Now</button>
+          </div>`;
+        document.getElementById("video-iframe").style.display = "none";
+      } else if (totalMinutes >= 25) {
+        banner.innerHTML = `
+          <div class="banner warning">
+            ⚠️ You’re down to your last 5 free minutes.
+            <br>Don’t get cut off — upgrade soon.
+          </div>`;
+      }
+    }
+
+    checkUsageAndWarn();
   </script>
 
 </body>
