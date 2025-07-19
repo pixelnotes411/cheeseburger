@@ -24,6 +24,8 @@
     #trial-expired { background:#ffdddd; padding:20px; border-radius:10px; color:#900; font-weight:bold; display:none; margin-bottom:20px; }
     #upgrade-banner { display:none; background:#ffe9a7; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #f1c40f; }
     #upgrade-banner button { background:#f39c12; }
+    #warning-banner { display:none; background:#fff4cc; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #f39c12; }
+    #warning-banner button { background:#f39c12; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; }
     .support-box {
       background:#f1f1f1;
       padding:10px;
@@ -43,6 +45,13 @@
   </header>
 
   <div class="main">
+    <!-- 5-minute warning banner -->
+    <div id="warning-banner">
+      ⚠️ You have about 5 minutes left on your free trial. Upgrade now to keep booking without interruption.<br><br>
+      <button onclick="upgradeNow()">Upgrade Now</button>
+    </div>
+
+    <!-- 30-minute upgrade banner -->
     <div id="upgrade-banner">
       🚫 Your free 30 minutes are up. Upgrade now to keep booking.<br>
       If you don’t upgrade or cancel, you’ll be charged after 2 days.
@@ -102,7 +111,6 @@
           <button onclick="location.href='manage-billing.html'">Manage Billing</button>
           <button onclick="upgradeNow()">Upgrade Plan</button>
           <button onclick="location.href='change-password.html'">Change Password</button>
-          <!-- replaced contact support button with copy/paste friendly version -->
         </div>
         <div class="support-box">
           📧 Need help? Email us at: <strong>joel@cheeseburger.pro</strong><br>
@@ -147,11 +155,23 @@
     async function checkUsageAndShowBanner() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
       const { data, error } = await supabase.from('bookings').select('duration').eq('user_id', user.id);
       if (error || !data) return;
+
       const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
+
+      // Show 5-minute warning if between 25 and 29
+      if (totalMinutes >= 25 && totalMinutes < 30) {
+        document.getElementById('warning-banner').style.display = 'block';
+      } else {
+        document.getElementById('warning-banner').style.display = 'none';
+      }
+
+      // Show upgrade banner if 30 or more
       if (totalMinutes >= 30) {
         document.getElementById('upgrade-banner').style.display = 'block';
+        document.getElementById('warning-banner').style.display = 'none';
       }
     }
 
@@ -164,11 +184,24 @@
       // Otherwise proceed
     }
 
+    // Call the function on load
     checkUsageAndShowBanner();
+
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("welcome-msg").innerText = "👋 Welcome back, " + user.email;
+        document.getElementById("booking-link").innerText = `https://cheeseburger.pro/${user.email.split('@')[0]}`;
+      }
+    }
+
     checkAuth();
   </script>
 </body>
 </html>
+
 
 
 
