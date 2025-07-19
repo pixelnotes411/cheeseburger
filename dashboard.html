@@ -4,9 +4,10 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Cheeseburger Dashboard</title>
+
+  <!-- Supabase client and early redirect -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script type="module">
-    // EARLY AUTH CHECK (runs before anything else)
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
@@ -15,11 +16,12 @@
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        // Redirect immediately if not logged in
+        // Immediately redirect if not logged in
         window.location.href = "login.html";
       }
     })();
   </script>
+
   <style>
     body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0; color:#333; }
     header { background:#222; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
@@ -50,23 +52,84 @@
   <div class="main">
     <div id="trial-expired">🚫 Your free trial has ended. Please upgrade to continue using Cheeseburger.</div>
     <div id="dashboard-content">
-      <!-- Existing content remains exactly as in your original file -->
-      <!-- ... (rest of your dashboard sections stay the same) ... -->
+      <div class="section">
+        <h2 id="welcome-msg">👋 Welcome back</h2>
+        <div id="call-stats" class="tracker">🎯 Loading call stats...</div>
+        <div id="hour-stats" class="tracker">🔥 Loading hour stats...</div>
+        <div id="action-buttons"></div>
+      </div>
+
+      <div class="section">
+        <h2>Your Booking Link</h2>
+        <div id="booking-link" class="link-box">Loading...</div>
+      </div>
+
+      <div class="section">
+        <h2>Booking Preferences</h2>
+        <label>Display Name</label>
+        <input type="text" id="display-name"/>
+        <label>Booking Prompt</label>
+        <input type="text" id="booking-prompt"/>
+        <label>Call Duration Limit</label>
+        <select id="duration-limit">
+          <option>30 min</option>
+          <option>45 min</option>
+          <option selected>60 min</option>
+        </select>
+        <button onclick="savePreferences()">Save Preferences</button>
+      </div>
+
+      <div class="section">
+        <h2>Availability</h2>
+        <label>Available Days</label>
+        <input type="text" id="available-days"/>
+        <label>Time Range</label>
+        <input type="text" id="time-range"/>
+        <label>Timezone</label>
+        <input type="text" id="timezone"/>
+      </div>
+
+      <div class="section">
+        <h2>Upcoming Bookings</h2>
+        <ul id="upcoming-bookings">
+          <li>Loading bookings...</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Account Controls</h2>
+        <div class="button-group">
+          <button onclick="location.href='manage-billing.html'">Manage Billing</button>
+          <button onclick="location.href='change-password.html'">Change Password</button>
+          <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
+          <button onclick="location.href='lead-list.html'">Lead List</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Keep your original Supabase script and logic -->
   <script>
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
     );
 
-    // your checkAuth, logout, loadStats, etc. stay the same...
+    // reuse your existing functions
     checkAuth();
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "login.html";
+    }
+    function copyBookingLink() {
+      const link = document.getElementById("booking-link").innerText;
+      navigator.clipboard.writeText(link);
+      alert("✅ Booking link copied!");
+    }
+    // keep your other logic (loadStats, loadBookings, etc.)
   </script>
 </body>
 </html>
+
 
 
 
