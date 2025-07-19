@@ -91,6 +91,23 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     );
 
+    // 🚦 Trial limit check on page load
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      const { data, error } = await supabase.from("bookings").select("duration").eq("user_id", user.id);
+      if (error || !data) return;
+
+      const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
+      if (totalMinutes >= 30) {
+        alert("🚫 Your free 30 minutes are up. Upgrade now to keep booking. If you don’t upgrade or cancel, you’ll be charged after 2 days.");
+        window.location.href = "https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00";
+      }
+    })();
+
     function generateRoomId() {
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
       let result = 'cb-';
@@ -161,6 +178,7 @@
   </script>
 </body>
 </html>
+
 
 
 
