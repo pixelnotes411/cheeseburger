@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lead List</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -10,48 +11,25 @@
       margin: 40px;
       background-color: #f5f5f5;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
+    h1 { text-align: center; color: #333; }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: #fff;
+      width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff;
     }
     th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: left;
+      border: 1px solid #ddd; padding: 12px; text-align: left;
     }
-    th {
-      background-color: #333;
-      color: white;
-    }
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-    .btn-container {
-      margin-top: 20px;
-      text-align: right;
-    }
+    th { background: #333; color: #fff; }
+    tr:hover { background: #f1f1f1; }
+    .btn-container { margin-top: 20px; text-align: right; }
     .btn {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 10px 16px;
-      margin-left: 10px;
-      text-decoration: none;
-      cursor: pointer;
+      background-color: #4CAF50; border: none; color: white;
+      padding: 10px 16px; margin-left: 10px; cursor: pointer;
     }
-    select {
-      padding: 4px;
-    }
+    select { padding: 4px; }
   </style>
 </head>
 <body>
-  <h1>Lead List</h1>
+  <h1>📋 Lead List</h1>
   <div class="btn-container">
     <button class="btn" onclick="selectAll()">Select All</button>
     <button class="btn" onclick="exportCSV()">Export</button>
@@ -68,7 +46,7 @@
       </tr>
     </thead>
     <tbody id="lead-body">
-      <!-- Leads will be inserted here -->
+      <tr><td colspan="6">Loading leads...</td></tr>
     </tbody>
   </table>
 
@@ -81,7 +59,8 @@
     async function fetchLeads() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert("Not logged in");
+        // Redirect to login if not logged in
+        window.location.href = "login.html";
         return;
       }
 
@@ -91,21 +70,21 @@
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error(error);
-        return;
-      }
-
       const tbody = document.getElementById("lead-body");
       tbody.innerHTML = "";
+
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">No leads found.</td></tr>';
+        return;
+      }
 
       data.forEach(lead => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td><input type="checkbox"></td>
-          <td>${lead.name}</td>
-          <td>${lead.email}</td>
-          <td>${lead.phone}</td>
+          <td>${lead.name || ""}</td>
+          <td>${lead.email || ""}</td>
+          <td>${lead.phone || ""}</td>
           <td>${lead.notes || ""}</td>
           <td>
             <select onchange="updateStatus('${lead.id}', this.value)">
@@ -126,10 +105,9 @@
         .from("leads")
         .update({ status: newStatus })
         .eq("id", leadId);
-
       if (error) {
         console.error("Error updating status:", error);
-        alert("Failed to update status");
+        alert("Failed to update status.");
       }
     }
 
@@ -142,10 +120,9 @@
     }
 
     function exportCSV() {
-      let table = document.getElementById("leadTable");
+      const table = document.getElementById("leadTable");
       let rows = table.querySelectorAll("tr");
       let csv = [];
-
       for (let row of rows) {
         let cols = row.querySelectorAll("td, th");
         let rowData = [];
@@ -154,10 +131,9 @@
         }
         csv.push(rowData.join(","));
       }
-
-      let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-      let encodedUri = encodeURI(csvContent);
-      let link = document.createElement("a");
+      const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
       link.setAttribute("download", "lead_list.csv");
       document.body.appendChild(link);
@@ -169,6 +145,7 @@
   </script>
 </body>
 </html>
+
 
 
 
