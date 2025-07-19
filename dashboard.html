@@ -34,6 +34,7 @@
     .link-box { background:#eee; padding:10px; border-radius:8px; margin-top:10px; font-size:14px; }
     .tracker { background:#dff0d8; padding:15px; border-radius:8px; font-weight:bold; margin-top:10px; }
     button { margin:5px 5px 0 0; padding:10px 20px; border:none; background:#333; color:#fff; border-radius:8px; cursor:pointer; }
+    button:hover { opacity:0.9; }
     ul { list-style:none; padding-left:0; }
     li { margin-bottom:10px; }
     .button-group { margin-top:10px; }
@@ -100,6 +101,8 @@
         <h2>Account Controls</h2>
         <div class="button-group">
           <button onclick="location.href='manage-billing.html'">Manage Billing</button>
+          <!-- New Upgrade button -->
+          <button onclick="upgradeNow()">Upgrade Plan</button>
           <button onclick="location.href='change-password.html'">Change Password</button>
           <button onclick="window.location.href='mailto:joel@cheeseburger.pro'">Contact Support</button>
           <button onclick="location.href='lead-list.html'">Lead List</button>
@@ -114,21 +117,28 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
     );
 
-    // reuse your existing functions
-    checkAuth();
     async function logout() {
       await supabase.auth.signOut();
       window.location.href = "login.html";
     }
+
     function copyBookingLink() {
       const link = document.getElementById("booking-link").innerText;
       navigator.clipboard.writeText(link);
       alert("✅ Booking link copied!");
     }
-    // keep your other logic (loadStats, loadBookings, etc.)
+
+    function upgradeNow() {
+      // ✅ Wired to your $47/month Stripe checkout link
+      window.location.href = "https://buy.stripe.com/3cI00j7uA9rZ6BEfkNeUU00";
+    }
+
+    // your existing loadStats, loadBookings, savePreferences, etc. stay the same
+    checkAuth();
   </script>
 </body>
 </html>
+
 
 
 
