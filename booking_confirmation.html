@@ -12,6 +12,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0;
     }
     .container {
       background: #fff;
@@ -24,9 +25,11 @@
     }
     h1 {
       color: #333;
+      margin-top: 0;
     }
     p {
       color: #555;
+      margin: 0.5rem 0;
     }
     .meeting-info {
       background: #f1f1f1;
@@ -35,6 +38,11 @@
       margin: 1rem 0;
       font-size: 1rem;
       word-break: break-word;
+      text-align: left;
+    }
+    .meeting-info strong {
+      display: inline-block;
+      width: 80px;
     }
     .btn {
       background: #000;
@@ -46,6 +54,9 @@
       display: inline-block;
       margin-top: 1rem;
     }
+    .btn:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
@@ -53,30 +64,37 @@
     <h1>✅ You're Booked!</h1>
     <p id="greeting">Thanks for booking your call.</p>
     <div class="meeting-info">
-      <strong>Date:</strong> <span id="confirmed-date">Loading...</span><br />
-      <strong>Time:</strong> <span id="confirmed-time">Loading...</span><br />
-      <strong>Meeting Link:</strong><br />
-      <a id="meeting-link" href="#" target="_blank">Loading link...</a>
+      <p><strong>Date:</strong> <span id="confirmed-date">Loading...</span></p>
+      <p><strong>Time:</strong> <span id="confirmed-time">Loading...</span></p>
+      <p><strong>Meeting:</strong> <a id="meeting-link" href="#" target="_blank" rel="noopener noreferrer">Loading link...</a></p>
     </div>
-    <a class="btn" id="join-call-btn" href="#" target="_blank">Join Call</a>
+    <a class="btn" id="join-call-btn" href="#" target="_blank" rel="noopener noreferrer">Join Call</a>
     <p>We'll also send you a confirmation by email and text.</p>
   </div>
 
   <script>
+    // Grab URL parameters
     const params = new URLSearchParams(window.location.search);
     const name = params.get("name") || "Guest";
     const date = params.get("date") || "Not provided";
     const time = params.get("time") || "Not provided";
     const room = params.get("room") || "Cheeseburger";
 
+    // Build a clean video URL (adjust base path if needed)
     const combinedTime = `${date} ${time}`;
-    const videoURL = `/video-call.html?room=${encodeURIComponent(room)}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(combinedTime)}`;
+    const videoURL = `video-call.html?room=${encodeURIComponent(room)}&name=${encodeURIComponent(name)}&time=${encodeURIComponent(combinedTime)}`;
 
+    // Update content
     document.getElementById("greeting").textContent = `Thanks for booking your call, ${name}.`;
     document.getElementById("confirmed-date").textContent = date;
     document.getElementById("confirmed-time").textContent = time;
-    document.getElementById("meeting-link").href = videoURL;
-    document.getElementById("meeting-link").textContent = videoURL;
+
+    // Update meeting link
+    const meetingLink = document.getElementById("meeting-link");
+    meetingLink.href = videoURL;
+    meetingLink.textContent = window.location.origin + "/" + videoURL;
+
+    // Update Join button
     document.getElementById("join-call-btn").href = videoURL;
   </script>
 </body>
