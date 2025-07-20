@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Cheeseburger Dashboard</title>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
@@ -14,7 +14,7 @@
     h2 { margin-top:0; font-size:20px; }
     label { display:block; margin-top:10px; font-weight:bold; }
     input[type="text"], select { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:8px; }
-    .link-box { background:#eee; padding:10px; border-radius:8px; margin-top:10px; font-size:14px; }
+    .link-box { background:#eee; padding:10px; border-radius:8px; margin-top:10px; font-size:14px; word-break:break-all; }
     .tracker { background:#dff0d8; padding:15px; border-radius:8px; font-weight:bold; margin-top:10px; }
     button { margin:5px 5px 0 0; padding:10px 20px; border:none; background:#333; color:#fff; border-radius:8px; cursor:pointer; }
     button:hover { opacity:0.9; }
@@ -26,13 +26,7 @@
     #upgrade-banner button { background:#f39c12; }
     #warning-banner { display:none; background:#fff4cc; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #f39c12; }
     #warning-banner button { background:#f39c12; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; }
-    .support-box {
-      background:#f1f1f1;
-      padding:10px;
-      border-radius:8px;
-      margin-top:8px;
-      display:inline-block;
-    }
+    .support-box { background:#f1f1f1; padding:10px; border-radius:8px; margin-top:8px; display:inline-block; }
   </style>
 </head>
 <body>
@@ -45,19 +39,19 @@
   </header>
 
   <div class="main">
+    <!-- Warning banners -->
     <div id="warning-banner">
       ⚠️ You have about 5 minutes left on your free trial. Upgrade now to keep booking without interruption.<br><br>
       <button onclick="upgradeNow()">Upgrade Now</button>
     </div>
-
     <div id="upgrade-banner">
       🚫 Your free 30 minutes are up. Upgrade now to keep booking.<br>
-      If you don’t upgrade or cancel, you’ll be charged after 2 days.
-      <br><br>
+      If you don’t upgrade or cancel, you’ll be charged after 2 days.<br><br>
       <button onclick="upgradeNow()">🔥 Upgrade Now</button>
     </div>
-
-    <div id="trial-expired">🚫 Your free trial has ended. Please upgrade to continue using Cheeseburger.</div>
+    <div id="trial-expired">
+      🚫 Your free trial has ended. Please upgrade to continue using Cheeseburger.
+    </div>
 
     <div id="dashboard-content">
       <div class="section">
@@ -144,7 +138,7 @@
 
   function copySupportEmail() {
     navigator.clipboard.writeText('joel@cheeseburger.pro');
-    alert('✅ Support email copied! Paste it into your email app.');
+    alert('✅ Support email copied!');
   }
 
   function upgradeNow() {
@@ -155,7 +149,11 @@
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data, error } = await supabase.from('bookings').select('duration').eq('user_id', user.id);
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('duration')
+      .eq('user_id', user.id);
+
     if (error || !data) return;
 
     const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
