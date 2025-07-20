@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Manage Your Booking</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -51,36 +51,126 @@
       display: block;
       margin-bottom: 0.5rem;
     }
-    input, select {
+    input {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Manage Your Booking</h2>
-    <div class="details">
-      <p><strong>Booking with:</strong> Joel from Cheeseburger</p>
-      <p><strong>Date:</strong> July 12, 2025</p>
-      <p><strong>Time:</strong> 2:00 PM (EST)</p>
+    <div class="details" id="booking-details">
+      <p><strong>Loading booking info...</strong></p>
     </div>
-    <form>
+    <form id="reschedule-form">
       <label for="new-date">Select a New Date</label>
-      <input type="date" id="new-date" name="new-date" />
+      <input type="date" id="new-date" name="new-date" required />
 
       <label for="new-time">Select a New Time</label>
-      <input type="time" id="new-time" name="new-time" />
+      <input type="time" id="new-time" name="new-time" required />
 
       <button class="btn" type="submit">Reschedule Booking</button>
     </form>
     <br />
-    <form>
-      <button class="btn cancel" type="submit">Cancel Booking</button>
-    </form>
+    <button class="btn cancel" id="cancel-btn">Cancel Booking</button>
+    <div class="message" id="message"></div>
   </div>
+
+  <script>
+    // ✅ Connect to Supabase
+    const supabase = supabase.createClient(
+      "https://mihvjqzxgnhcdddbduak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
+    );
+
+    // ✅ Get booking_id from URL
+    const params = new URLSearchParams(window.location.search);
+    const bookingId = params.get('booking_id');
+
+    const detailsDiv = document.getElementById('booking-details');
+    const messageEl = document.getElementById('message');
+
+    if (!bookingId) {
+      detailsDiv.innerHTML = "<p><strong>Error:</strong> No booking ID found in URL.</p>";
+    } else {
+      loadBooking();
+    }
+
+    // ✅ Load booking details
+    async function loadBooking() {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('id', bookingId)
+        .single();
+
+      if (error || !data) {
+        detailsDiv.innerHTML = "<p><strong>Error loading booking.</strong></p>";
+        return;
+      }
+
+      const bookingTime = data.booking_time ? new Date(data.booking_time).toLocaleString() : "Not available";
+      detailsDiv.innerHTML = `
+        <p><strong>Booking with:</strong> Joel from Cheeseburger</p>
+        <p><strong>Date & Time:</strong> ${bookingTime}</p>
+      `;
+    }
+
+    // ✅ Reschedule booking
+    document.getElementById('reschedule-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newDate = document.getElementById('new-date').value;
+      const newTime = document.getElementById('new-time').value;
+      if (!newDate || !newTime) {
+        messageEl.textContent = "⚠️ Please select both a new date and time.";
+        messageEl.style.color = "red";
+        return;
+      }
+      const newDateTime = `${newDate}T${newTime}`;
+
+      const { error } = await supabase
+        .from('bookings')
+        .update({ booking_time: newDateTime })
+        .eq('id', bookingId);
+
+      if (error) {
+        messageEl.textContent = "❌ Failed to reschedule: " + error.message;
+        messageEl.style.color = "red";
+      } else {
+        messageEl.textContent = "✅ Booking rescheduled successfully!";
+        messageEl.style.color = "green";
+        loadBooking();
+      }
+    });
+
+    // ✅ Cancel booking
+    document.getElementById('cancel-btn').addEventListener('click', async () => {
+      if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', bookingId);
+
+      if (error) {
+        messageEl.textContent = "❌ Failed to cancel: " + error.message;
+        messageEl.style.color = "red";
+      } else {
+        messageEl.textContent = "✅ Booking cancelled successfully!";
+        messageEl.style.color = "green";
+        detailsDiv.innerHTML = "<p><strong>This booking has been cancelled.</strong></p>";
+      }
+    });
+  </script>
 </body>
 </html>
+
