@@ -11,7 +11,10 @@
       margin: 40px;
       background-color: #f5f5f5;
     }
-    h1 { text-align: center; color: #333; }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -28,7 +31,9 @@
       background: #333;
       color: #fff;
     }
-    tr:hover { background: #f1f1f1; }
+    tr:hover {
+      background: #f1f1f1;
+    }
     .btn-container {
       margin-top: 20px;
       text-align: right;
@@ -43,7 +48,9 @@
       border-radius: 4px;
       font-size: 14px;
     }
-    select { padding: 4px; }
+    select {
+      padding: 4px;
+    }
   </style>
 </head>
 <body>
@@ -52,6 +59,7 @@
     <button class="btn" onclick="selectAll()">Select All</button>
     <button class="btn" onclick="exportCSV()">Export</button>
   </div>
+
   <table id="leadTable">
     <thead>
       <tr>
@@ -158,11 +166,12 @@
       document.body.removeChild(link);
     }
 
-    // Fetch leads on load
+    // Load leads on page load
     fetchLeads();
   </script>
 </body>
 </html>
+
 
 
 
