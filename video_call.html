@@ -72,6 +72,9 @@
       border-radius: 6px;
       cursor: pointer;
     }
+    .banner button:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
@@ -95,22 +98,26 @@
   </div>
 
   <script>
+    // ✅ Supabase client
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
     );
 
+    // ✅ Get URL params
     const urlParams = new URLSearchParams(window.location.search);
     const name = decodeURIComponent(urlParams.get("name") || "Guest");
     const time = decodeURIComponent(urlParams.get("time") || new Date().toLocaleString());
     const room = urlParams.get("room") || "default-room";
 
+    // ✅ Daily.co room
     const dailyRoomUrl = `https://cheeseburgerpro.daily.co/${encodeURIComponent(room)}`;
 
     document.getElementById("meeting-title").textContent = `Meeting with ${name}`;
     document.getElementById("meeting-time").textContent = `Scheduled at: ${time}`;
     document.getElementById("video-iframe").src = dailyRoomUrl;
 
+    // ✅ Timer
     let seconds = 0;
     const timer = document.getElementById("duration");
     setInterval(() => {
@@ -120,11 +127,16 @@
       timer.textContent = `${min}:${sec}`;
     }, 1000);
 
+    // ✅ Check usage against Supabase
     async function checkUsageAndWarn() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase.from('bookings').select('duration').eq('user_id', user.id);
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('duration')
+        .eq('user_id', user.id);
+
       if (error || !data) return;
 
       const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
@@ -141,15 +153,14 @@
       } else if (totalMinutes >= 25) {
         banner.innerHTML = `
           <div class="banner warning">
-            ⚠️ You’re down to your last 5 free minutes.
-            <br>Don’t get cut off — upgrade soon.
+            ⚠️ You’re down to your last 5 free minutes.<br>
+            Don’t get cut off — upgrade soon.
           </div>`;
       }
     }
 
     checkUsageAndWarn();
   </script>
-
 </body>
 </html>
 
