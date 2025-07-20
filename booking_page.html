@@ -16,7 +16,7 @@
       height: 100vh;
     }
     .booking-container {
-      background: white;
+      background: #fff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
@@ -32,7 +32,7 @@
       margin: 10px 0 5px;
       font-weight: 600;
     }
-    input, select, textarea, button {
+    input, textarea, button {
       width: 100%;
       padding: 12px;
       margin-bottom: 15px;
@@ -42,7 +42,7 @@
     }
     button {
       background-color: #000;
-      color: white;
+      color: #fff;
       font-weight: bold;
       border: none;
       cursor: pointer;
@@ -62,19 +62,19 @@
     <h2>Book a Call</h2>
     <form id="booking-form">
       <label for="name">Full Name</label>
-      <input type="text" id="name" placeholder="John Doe" required>
+      <input type="text" id="name" placeholder="John Doe" required />
 
       <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="you@example.com" required>
+      <input type="email" id="email" placeholder="you@example.com" required />
 
       <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" placeholder="+1 555 123 4567" required>
+      <input type="tel" id="phone" placeholder="+1 555 123 4567" required />
 
       <label for="date">Select Date</label>
-      <input type="date" id="date" required>
+      <input type="date" id="date" required />
 
       <label for="time">Select Time</label>
-      <input type="time" id="time" required>
+      <input type="time" id="time" required />
 
       <label for="notes">Additional Notes (Optional)</label>
       <textarea id="notes" rows="4" placeholder="What would you like to discuss?"></textarea>
@@ -86,19 +86,23 @@
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
+    // ✅ Replace with your actual anon key
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
     );
 
-    // 🚦 Trial limit check on page load
+    // 🚦 Trial limit check
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = "login.html";
         return;
       }
-      const { data, error } = await supabase.from("bookings").select("duration").eq("user_id", user.id);
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("duration")
+        .eq("user_id", user.id);
       if (error || !data) return;
 
       const totalMinutes = data.reduce((sum, b) => sum + (b.duration || 0), 0);
@@ -109,8 +113,8 @@
     })();
 
     function generateRoomId() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let result = 'cb-';
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+      let result = "cb-";
       for (let i = 0; i < 6; i++) {
         result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
@@ -120,27 +124,23 @@
     document.getElementById("booking-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const client_name = document.getElementById("name").value;
-      const client_email = document.getElementById("email").value;
-      const client_phone = document.getElementById("phone").value;
+      const client_name = document.getElementById("name").value.trim();
+      const client_email = document.getElementById("email").value.trim();
+      const client_phone = document.getElementById("phone").value.trim();
       const date = document.getElementById("date").value;
       const time = document.getElementById("time").value;
-      const notes = document.getElementById("notes").value;
+      const notes = document.getElementById("notes").value.trim();
       const booking_time = `${date} ${time}`;
       const room_id = generateRoomId();
 
-      const {
-        data: { user },
-        error: userError
-      } = await supabase.auth.getUser();
-
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (!user || userError) {
         alert("You must be logged in to book a call.");
         return;
       }
 
       const user_id = user.id;
-      const booking_link = `https://cheeseburger.pro/video-call.html?name=${encodeURIComponent(client_name)}&time=${encodeURIComponent(booking_time)}&room=${encodeURIComponent(room_id)}`;
+      const booking_link = `${window.location.origin}/video-call.html?name=${encodeURIComponent(client_name)}&time=${encodeURIComponent(booking_time)}&room=${encodeURIComponent(room_id)}`;
 
       const { error: bookingError } = await supabase.from("bookings").insert([{
         user_id,
@@ -161,7 +161,7 @@
       }]);
 
       if (bookingError || leadError) {
-        alert("Something went wrong. Please try again.");
+        alert("❌ Something went wrong. Please try again.");
         return;
       }
 
@@ -169,7 +169,6 @@
         name: client_name,
         date,
         time,
-        link: booking_link,
         room: room_id
       });
 
