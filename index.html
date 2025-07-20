@@ -85,30 +85,38 @@
       <div id="error-message" class="error-message"></div>
     </form>
     <div class="form-footer">
-      <p><a href="#">Forgot your password?</a></p>
-      <p><a href="https://your-stripe-checkout-link.com">Don't have an account? Start your trial</a></p>
+      <p><a href="forgot-password.html">Forgot your password?</a></p>
+      <p><a href="signup.html">Don't have an account? Start your trial</a></p>
     </div>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
+    // ✅ Use your actual Supabase project details here
     const supabase = supabase.createClient(
       "https://mihvjqzxgnhcdddbduak.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1paHZqcXp4Z25oY2RkZGJkdWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjk4NjQsImV4cCI6MjA2NTk0NTg2NH0.fQeu1tPRwBsdkGtK5-Wzv7B8YiJGFzAuxnxM6TrXllI"
     );
 
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const errorDiv = document.getElementById("error-message");
+
+      errorDiv.textContent = ""; // clear any old errors
+
+      if (!email || !password) {
+        errorDiv.textContent = "Please fill in both fields.";
+        return;
+      }
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
         errorDiv.textContent = "Login failed: " + error.message;
       } else {
+        // ✅ login succeeded
         window.location.href = "dashboard.html";
       }
     });
